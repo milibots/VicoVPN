@@ -84,3 +84,6 @@ vicovpn_post_onboarding_crash_*.zip
 github_setup.py
 apply_vicovpn_*.py
 collect_vicovpn_*.py
+
+# Local release-fix backups
+.vicovpn_release_fix_backups/

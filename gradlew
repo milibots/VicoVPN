@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 GRADLE_VERSION=8.13
-GRADLE_SHA256=966cfde05c7152811cfc655f4917ba11d9a8f79d32b6261aa5fb524bd2ab3b18
+GRADLE_SHA256=20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 CACHE_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}/vicovpn-dist"
 ZIP="$CACHE_DIR/gradle-$GRADLE_VERSION-bin.zip"

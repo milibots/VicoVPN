@@ -54,7 +54,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             VERSION="${GITHUB_REF_NAME}"
           else
@@ -77,55 +76,15 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-read-only: false
-
-      - name: Repair Gradle Wrapper checksum
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          WRAPPER_PROPERTIES="gradle/wrapper/gradle-wrapper.properties"
-          GRADLE_813_BIN_SHA256="20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78"
-
-          if [[ ! -f "${WRAPPER_PROPERTIES}" ]]; then
-            echo "Missing ${WRAPPER_PROPERTIES}"
-            exit 1
-          fi
-
-          echo "Current Gradle Wrapper configuration:"
-          cat "${WRAPPER_PROPERTIES}"
-
-          if grep -q '^distributionSha256Sum=' "${WRAPPER_PROPERTIES}"; then
-            sed -i \
-              "s|^distributionSha256Sum=.*|distributionSha256Sum=${GRADLE_813_BIN_SHA256}|" \
-              "${WRAPPER_PROPERTIES}"
-          else
-            echo "distributionSha256Sum=${GRADLE_813_BIN_SHA256}" \
-              >> "${WRAPPER_PROPERTIES}"
-          fi
-
-          echo
-          echo "Verified Gradle Wrapper configuration:"
-          cat "${WRAPPER_PROPERTIES}"
 
       - name: Make Gradle wrapper executable
         shell: bash
         run: chmod +x ./gradlew
 
-      - name: Show build environment
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          java -version
-          ./gradlew --version
-
       - name: Build and test debug APK
         shell: bash
         run: |
           set -euo pipefail
-
           ./gradlew \
             clean \
             testDebugUnitTest \
@@ -138,47 +97,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
-          echo "Running Android lint as a non-blocking diagnostic check."
-
-          ./gradlew \
-            lintDebug \
-            --stacktrace \
-            --no-daemon
+          ./gradlew lintDebug --stacktrace --no-daemon
 
       - name: Prepare debug APK
         shell: bash
         run: |
           set -euo pipefail
-
           mkdir -p dist
-
-          DEBUG_APK="$(
-            find app/build/outputs/apk/debug \
-              -type f \
-              -name '*.apk' \
-              | head -n 1
-          )"
-
+          DEBUG_APK="$(find app/build/outputs/apk/debug -type f -name '*.apk' | head -n 1)"
           if [[ -z "${DEBUG_APK}" ]]; then
             echo "Debug APK was not found."
-
-            if [[ -d "app/build/outputs" ]]; then
-              find app/build/outputs \
-                -maxdepth 5 \
-                -type f \
-                -print
-            fi
-
+            find app/build/outputs -maxdepth 5 -type f -print || true
             exit 1
           fi
-
-          DEBUG_OUTPUT="dist/VicoVPN-${{ steps.version.outputs.version }}-debug.apk"
-
-          cp "${DEBUG_APK}" "${DEBUG_OUTPUT}"
-
-          echo "Prepared debug APK:"
-          ls -lh "${DEBUG_OUTPUT}"
+          cp "${DEBUG_APK}" "dist/VicoVPN-${{ steps.version.outputs.version }}-debug.apk"
 
       - name: Build and sign production release APK
         id: signed_release
@@ -197,55 +129,23 @@ jobs:
           fi
 
           KEYSTORE_PATH="${RUNNER_TEMP}/vicovpn-release.jks"
-
-          printf '%s' "${ANDROID_KEYSTORE_BASE64}" \
-            | base64 --decode \
-            > "${KEYSTORE_PATH}"
+          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "${KEYSTORE_PATH}"
 
           if [[ ! -s "${KEYSTORE_PATH}" ]]; then
             echo "Decoded keystore file is empty."
             exit 1
           fi
 
-          ./gradlew \
-            assembleRelease \
-            --stacktrace \
-            --no-daemon
+          ./gradlew assembleRelease --stacktrace --no-daemon
 
-          UNSIGNED_APK="$(
-            find app/build/outputs/apk/release \
-              -type f \
-              \( -name '*-unsigned.apk' -o -name '*release*.apk' \) \
-              | head -n 1
-          )"
-
+          UNSIGNED_APK="$(find app/build/outputs/apk/release -type f \( -name '*-unsigned.apk' -o -name '*release*.apk' \) | head -n 1)"
           if [[ -z "${UNSIGNED_APK}" ]]; then
             echo "Release APK was not found."
-
-            if [[ -d "app/build/outputs" ]]; then
-              find app/build/outputs \
-                -maxdepth 5 \
-                -type f \
-                -print
-            fi
-
+            find app/build/outputs -maxdepth 5 -type f -print || true
             exit 1
           fi
 
-          if [[ -z "${ANDROID_HOME:-}" ]]; then
-            echo "ANDROID_HOME is not configured."
-            exit 1
-          fi
-
-          BUILD_TOOLS="$(
-            find "${ANDROID_HOME}/build-tools" \
-              -mindepth 1 \
-              -maxdepth 1 \
-              -type d \
-              | sort -V \
-              | tail -n 1
-          )"
-
+          BUILD_TOOLS="$(find "${ANDROID_HOME}/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
           if [[ -z "${BUILD_TOOLS}" ]]; then
             echo "Android build-tools were not found."
             exit 1
@@ -253,27 +153,13 @@ jobs:
 
           ZIPALIGN="${BUILD_TOOLS}/zipalign"
           APKSIGNER="${BUILD_TOOLS}/apksigner"
-
-          if [[ ! -x "${ZIPALIGN}" ]]; then
-            echo "zipalign was not found at ${ZIPALIGN}"
-            exit 1
-          fi
-
-          if [[ ! -x "${APKSIGNER}" ]]; then
-            echo "apksigner was not found at ${APKSIGNER}"
-            exit 1
-          fi
+          [[ -x "${ZIPALIGN}" ]] || { echo "zipalign was not found at ${ZIPALIGN}"; exit 1; }
+          [[ -x "${APKSIGNER}" ]] || { echo "apksigner was not found at ${APKSIGNER}"; exit 1; }
 
           ALIGNED_APK="${RUNNER_TEMP}/VicoVPN-aligned.apk"
           SIGNED_APK="dist/VicoVPN-${{ steps.version.outputs.version }}.apk"
 
-          "${ZIPALIGN}" \
-            -p \
-            -f \
-            4 \
-            "${UNSIGNED_APK}" \
-            "${ALIGNED_APK}"
-
+          "${ZIPALIGN}" -p -f 4 "${UNSIGNED_APK}" "${ALIGNED_APK}"
           "${APKSIGNER}" sign \
             --ks "${KEYSTORE_PATH}" \
             --ks-key-alias "${ANDROID_KEY_ALIAS}" \
@@ -281,46 +167,19 @@ jobs:
             --key-pass "pass:${ANDROID_KEY_PASSWORD}" \
             --out "${SIGNED_APK}" \
             "${ALIGNED_APK}"
-
-          "${APKSIGNER}" verify \
-            --verbose \
-            --print-certs \
-            "${SIGNED_APK}"
-
+          "${APKSIGNER}" verify --verbose --print-certs "${SIGNED_APK}"
           echo "created=true" >> "${GITHUB_OUTPUT}"
-
-          echo "Prepared signed release APK:"
-          ls -lh "${SIGNED_APK}"
 
       - name: Generate checksums
         shell: bash
         run: |
           set -euo pipefail
-
           if ! compgen -G "dist/*.apk" > /dev/null; then
             echo "No APK files exist in dist."
             exit 1
           fi
-
-          (
-            cd dist
-            sha256sum *.apk > checksums-sha256.txt
-          )
-
-          echo "Generated SHA-256 checksums:"
+          (cd dist && sha256sum *.apk > checksums-sha256.txt)
           cat dist/checksums-sha256.txt
-
-      - name: Show prepared release files
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          echo "Files that will be published:"
-          find dist \
-            -maxdepth 1 \
-            -type f \
-            -printf '%f — %s bytes\n' \
-            | sort
 
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
@@ -341,30 +200,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           EXTRA_FLAGS=()
 
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            if [[ "${MANUAL_DRAFT}" == "true" ]]; then
-              EXTRA_FLAGS+=(--draft)
-            fi
-
-            if [[ "${MANUAL_PRERELEASE}" == "true" ]]; then
-              EXTRA_FLAGS+=(--prerelease)
-            fi
+            [[ "${MANUAL_DRAFT}" == "true" ]] && EXTRA_FLAGS+=(--draft)
+            [[ "${MANUAL_PRERELEASE}" == "true" ]] && EXTRA_FLAGS+=(--prerelease)
           fi
 
           if gh release view "${VERSION}" >/dev/null 2>&1; then
-            echo "Release ${VERSION} already exists."
-            echo "Updating its downloadable assets."
-
-            gh release upload \
-              "${VERSION}" \
-              dist/* \
-              --clobber
+            gh release upload "${VERSION}" dist/* --clobber
           else
-            echo "Creating GitHub Release ${VERSION}."
-
             gh release create \
               "${VERSION}" \
               dist/* \
