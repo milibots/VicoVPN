@@ -3,6 +3,12 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val disableAbiSplitsForBundle =
+    project.findProperty("VICOVPN_DISABLE_ABI_SPLITS")
+        ?.toString()
+        ?.equals("true", ignoreCase = true)
+        ?: false
+
 android {
     namespace = "com.vicovpn.client"
     compileSdk = 35
@@ -23,10 +29,10 @@ android {
     // Produces four per-ABI APKs plus one universal APK.
     splits {
         abi {
-            isEnable = true
+            isEnable = !disableAbiSplitsForBundle
             reset()
             include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            isUniversalApk = true
+            isUniversalApk = !disableAbiSplitsForBundle
         }
     }
     // END VicoVPN MANAGED ABI SPLITS

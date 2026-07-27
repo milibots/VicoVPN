@@ -107,3 +107,10 @@ fix_vicovpn_notification_import_release_py38.py
 fix.py
 # Local final tint-fix artifacts
 .vicovpn_final_tint_fix_backups/
+# Local release-image repair artifacts
+.vicovpn_release_image_backups/
+fix_release_image.py
+# Local AAB release-fix artifacts
+.vicovpn_aab_release_backups/
+fix_aab_release.py
+release-apks/

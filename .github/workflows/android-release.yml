@@ -156,7 +156,7 @@ jobs:
             fi
           done
 
-      - name: Build release APK splits and app bundle
+      - name: Build release APK splits
         shell: bash
         env:
           VERSION_NAME: ${{ steps.version.outputs.version_name }}
@@ -168,7 +168,38 @@ jobs:
             clean \
             testDebugUnitTest \
             assembleRelease \
+            -PVERSION_NAME="${VERSION_NAME}" \
+            -PVERSION_CODE="${VERSION_CODE}" \
+            --stacktrace \
+            --no-daemon
+
+          rm -rf release-apks
+          mkdir -p release-apks
+          find app/build/outputs/apk/release \
+            -type f \
+            -name '*.apk' \
+            -exec cp '{}' release-apks/ ';'
+
+          APK_COUNT="$(find release-apks -type f -name '*.apk' | wc -l)"
+
+          if [[ "${APK_COUNT}" -lt 5 ]]; then
+            echo "::error::Expected 5 APKs before bundle build, found ${APK_COUNT}."
+            find release-apks -maxdepth 1 -type f -print
+            exit 1
+          fi
+
+      - name: Build Android App Bundle without manual ABI APK splits
+        shell: bash
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+        run: |
+          set -euo pipefail
+
+          ./gradlew \
+            clean \
             bundleRelease \
+            -PVICOVPN_DISABLE_ABI_SPLITS=true \
             -PVERSION_NAME="${VERSION_NAME}" \
             -PVERSION_CODE="${VERSION_CODE}" \
             --stacktrace \
@@ -233,7 +264,7 @@ jobs:
           [[ -x "${AAPT}" ]] || { echo "::error::aapt is missing."; exit 1; }
 
           mapfile -t SOURCE_APKS < <(
-            find app/build/outputs/apk/release \
+            find release-apks \
               -type f \
               -name '*.apk' \
               | sort
