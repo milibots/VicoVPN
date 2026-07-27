@@ -79,3 +79,8 @@ local.properties
 *.before_*
 *.before_button_style_fix
 vicovpn_post_onboarding_crash_*.zip
+
+# Local maintenance scripts
+github_setup.py
+apply_vicovpn_*.py
+collect_vicovpn_*.py
