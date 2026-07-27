@@ -1,0 +1,8 @@
+AndroidLibXrayLite.tag=v26.6.27
+AndroidLibXrayLite.release_commit=5fa2b07
+AndroidLibXrayLite.asset=libv2ray.aar
+AndroidLibXrayLite.license=LGPL-3.0
+Xray-core.version=v26.6.27
+Xray-core.commit=45cf2898ab12e97a55dd8f1f3d78d903340bdc9e
+install.command=bash scripts/bootstrap-native.sh
+checksum.note=The bootstrap script records the downloaded AAR SHA-256 beside the artifact.

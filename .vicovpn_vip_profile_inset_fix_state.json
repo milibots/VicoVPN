@@ -1,0 +1,11 @@
+{
+  "backup": ".vicovpn_vip_profile_inset_fix_backups\\20260727_061047",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\VipProfileActivity.kt": {
+      "existed": true
+    },
+    "apply_vicovpn_vip_profile_polish_v2.py": {
+      "existed": true
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "backup": ".vicovpn_center_ui_cleanup_backups\\20260726_013248",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-night\\colors_vico_premium.xml": {
+      "existed": true
+    }
+  }
+}

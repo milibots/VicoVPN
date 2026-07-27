@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <gradient
+        android:centerColor="@color/vico_connect_glow_center"
+        android:endColor="@android:color/transparent"
+        android:gradientRadius="132dp"
+        android:startColor="@color/vico_connect_glow_edge"
+        android:type="radial" />
+
+</shape>

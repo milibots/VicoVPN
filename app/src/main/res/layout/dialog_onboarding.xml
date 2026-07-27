@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/vico_premium_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="28dp"
+        android:paddingTop="44dp"
+        android:paddingEnd="28dp"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:id="@+id/onboardingSkip"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:text="@string/onboarding_skip"
+            android:textColor="@color/vico_premium_muted"
+            android:textSize="14sp" />
+
+        <Space android:layout_width="1dp" android:layout_height="0dp" android:layout_weight="0.55" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="176dp"
+            android:layout_height="176dp"
+            android:layout_gravity="center_horizontal"
+            app:cardBackgroundColor="@color/vico_premium_card"
+            app:cardCornerRadius="88dp"
+            app:strokeColor="@color/vico_premium_outline"
+            app:strokeWidth="1dp">
+
+            <ImageView
+                android:id="@+id/onboardingIcon"
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/onboardingTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="34dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textColor="@color/vico_premium_white"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/onboardingBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/vico_premium_muted"
+            android:textSize="16sp" />
+
+        <Space android:layout_width="1dp" android:layout_height="0dp" android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/onboardingDots"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:orientation="horizontal" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/onboardingNext"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="22dp"
+            android:backgroundTint="@color/vico_premium_orange"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/onboarding_next"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFFFF"
+            android:textSize="16sp"
+            app:cornerRadius="30dp" />
+
+        <TextView
+            android:id="@+id/onboardingDiscoveryState"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/onboarding_finding_route_silently"
+            android:textColor="@color/vico_premium_muted"
+            android:textSize="12sp" />
+    </LinearLayout>
+</FrameLayout>

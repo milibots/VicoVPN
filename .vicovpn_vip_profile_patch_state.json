@@ -1,0 +1,47 @@
+{
+  "backup": ".vicovpn_vip_profile_backups\\20260726_020825",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\server\\ServerOrigin.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\server\\ServerStore.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\AndroidManifest.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\drawable\\bg_premium_speed_icon.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\SubscriptionModels.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\SubscriptionApiClient.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\VipProfileActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_vip_profile.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-night\\colors_vico_premium.xml": {
+      "existed": true
+    }
+  }
+}

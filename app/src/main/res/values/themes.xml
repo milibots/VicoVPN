@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.VicoVPN" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <item name="colorPrimary">@color/vico_primary</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+        <item name="colorSecondary">@color/vico_secondary</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+
+        <item name="colorSurface">@color/vico_surface</item>
+        <item name="colorOnSurface">@color/vico_text</item>
+
+        <item name="colorSurfaceVariant">@color/vico_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/vico_text_secondary</item>
+
+        <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
+        <item name="android:windowLightNavigationBar">?attr/isLightTheme</item>
+
+        <item name="android:statusBarColor">@color/vico_background</item>
+        <item name="android:navigationBarColor">@color/vico_background</item>
+
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="q">false</item>
+
+    </style>
+
+</resources>

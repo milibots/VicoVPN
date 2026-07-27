@@ -1,0 +1,23 @@
+{
+  "backup": ".vicovpn_vip_profile_polish_v2_backups\\20260727_060738",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\VipProfileActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_vip_profile.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    }
+  }
+}

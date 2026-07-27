@@ -1,0 +1,68 @@
+{
+  "backup": ".vicovpn_stability_split_backups\\20260725_230455",
+  "files": {
+    "app\\build.gradle.kts": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\vpn\\VicoVpnService.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\NativeBatchDelayTester.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\xray\\XrayNativeBridge.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SmartRefreshScheduler.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SmartRefreshReceiver.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\AndroidManifest.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-night\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SafeSubscriptionRefreshWorker.kt": {
+      "existed": false
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\split\\SplitTunnelSettings.kt": {
+      "existed": false
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\split\\SplitTunnelingActivity.kt": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_nav_settings_gear.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_split_tunnel.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_arrow_back.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\bg_liquid_glass.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\bg_nav_item_selected.xml": {
+      "existed": true
+    }
+  }
+}

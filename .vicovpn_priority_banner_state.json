@@ -1,0 +1,62 @@
+{
+  "backup": ".vicovpn_priority_banner_backups\\20260726_024808",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\server\\ServerStore.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\server\\ConnectionPrioritySettings.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\server\\ConnectionPrioritySheet.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\NativeBatchDelayTester.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SafeSubscriptionRefreshWorker.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SmartRefreshScheduler.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\vpn\\VicoVpnService.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\VipProfileActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\SubscriptionModels.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\PublicBannerClient.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\HomeBannerController.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\VipRouteOptimizer.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\profile\\VipLocationSheet.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-night\\colors_vico_premium.xml": {
+      "existed": true
+    }
+  }
+}

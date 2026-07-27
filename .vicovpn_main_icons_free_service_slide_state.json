@@ -1,0 +1,41 @@
+{
+  "backup": ".vicovpn_main_icons_free_service_slide_backups\\20260727_073451",
+  "files": {
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\onboarding\\OnboardingSlide.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\onboarding\\OnboardingAdapter.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\onboarding\\OnboardingActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\drawable\\ic_upload_pixel.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_download_pixel.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_power_pixel.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_chevron_pixel.xml": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\layout\\activity_vip_profile.xml": {
+      "existed": true
+    }
+  }
+}

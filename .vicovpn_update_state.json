@@ -1,0 +1,183 @@
+{
+  "created_at": "20260725_120031",
+  "backup_dir": ".vicovpn_backups\\20260725_120031",
+  "files": {
+    "app/src/main/java/com/vicovpn/client/MainActivity.kt": {
+      "existed": true,
+      "sha256_before": "81d3a8258539390b4e0a8678130b361a74c9961d1b11b18db8f7acd10f441459"
+    },
+    "app/src/main/java/com/vicovpn/client/model/ProxyProfile.kt": {
+      "existed": true,
+      "sha256_before": "460d7efe86bdd8b3c867254d0a1290a84332c9199a7d5561308ce9e3e98dec6a"
+    },
+    "app/src/main/java/com/vicovpn/client/net/NetworkStateMonitor.kt": {
+      "existed": true,
+      "sha256_before": "06fc45bab49000a7773852401e0fd957155b301aaf3277881cb73793d97fa708"
+    },
+    "app/src/main/java/com/vicovpn/client/parser/ShareLinkParser.kt": {
+      "existed": true,
+      "sha256_before": "9ec0915005d483a1e3a3c2c930c08868bd6285bc51c731140171a673c3c0d4e0"
+    },
+    "app/src/main/java/com/vicovpn/client/server/ServerStore.kt": {
+      "existed": true,
+      "sha256_before": "34c0505d0006e6defbe67029956fae8a79cb7fb905109f7788b6eccc3fa086bc"
+    },
+    "app/src/main/java/com/vicovpn/client/subscription/FreeServerSettings.kt": {
+      "existed": true,
+      "sha256_before": "fcd3547508372cc5c59cc3d11303e7d78dd56222f0c762ed47de8808a05d16d8"
+    },
+    "app/src/main/java/com/vicovpn/client/subscription/HttpTextClient.kt": {
+      "existed": true,
+      "sha256_before": "2ef5610c6512648ff5f8ec9141ae7bbc3665980f17dfe1922a39019d76d1d8b0"
+    },
+    "app/src/main/java/com/vicovpn/client/subscription/NativeBatchDelayTester.kt": {
+      "existed": true,
+      "sha256_before": "7bece7fc58900f3437826ea84b67393ff64326ac18310ad60dcb3234ce741cc1"
+    },
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionContentParser.kt": {
+      "existed": true,
+      "sha256_before": "c14146f3859affb37d5ebd40dbfcf9cd21ea2ae99d8f573671726101a4cda52b"
+    },
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionImporter.kt": {
+      "existed": true,
+      "sha256_before": "41bcff208b5b4c78a093c4a9494a8f589110c648fd2ec857e24bb1c2e314b0a4"
+    },
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionRegistryClient.kt": {
+      "existed": true,
+      "sha256_before": "2595ca1e9f5340acffc2d592966ddec795fdc36dcc07298e7c85aaea8800824b"
+    },
+    "app/src/main/java/com/vicovpn/client/ui/AmbientSmokeView.kt": {
+      "existed": true,
+      "sha256_before": "a6c3111fe84e941142f0bcb527f80ddfd3e517906ea574eb6b0bd723f8fd2ea7"
+    },
+    "app/src/main/java/com/vicovpn/client/ui/ConnectionOrbView.kt": {
+      "existed": true,
+      "sha256_before": "e41eaee572149976813d8aae3c4ef920ff0b3ed8e5ac6304f42c703f332c7985"
+    },
+    "app/src/main/java/com/vicovpn/client/util/BatteryOptimizationHelper.kt": {
+      "existed": true,
+      "sha256_before": "214754e7a61ae02c1fcde28069eac4c1c7b7e191fbe27594f21e5cd420c4ec5d"
+    },
+    "app/src/main/java/com/vicovpn/client/vpn/VicoVpnService.kt": {
+      "existed": true,
+      "sha256_before": "7031b37956d248e3de74b2563af3a9faa102c02fc40163741fd61423389d81c2"
+    },
+    "app/src/main/java/com/vicovpn/client/xray/XrayConfigBuilder.kt": {
+      "existed": true,
+      "sha256_before": "4cfc91eecd0b9af6346aaaa96cc05b571acd7e1998c7adf49d59dbfa265d9eb9"
+    },
+    "app/src/main/java/com/vicovpn/client/xray/XrayNativeBridge.kt": {
+      "existed": true,
+      "sha256_before": "a9add446295e6859013244896dd0ec84636ac0570a60e89fd778cbcbbc1e4c8a"
+    },
+    "app/src/main/res/drawable/bg_nav_item_selected.xml": {
+      "existed": true,
+      "sha256_before": "e53b685fd2bc568e5258c19cb9b99b279e436645e1e845a30abd51855ab8fb39"
+    },
+    "app/src/main/res/drawable/bg_nav_item_transparent.xml": {
+      "existed": true,
+      "sha256_before": "56916fe234baecfaac59c8c163cbcd3ca52360db29cba0ce0a5cb1f2f456dfa7"
+    },
+    "app/src/main/res/drawable/bg_premium_offline_icon.xml": {
+      "existed": true,
+      "sha256_before": "8b84b6e7d8c1ae4de72fb773ca6bd95c3434714014b91fc37a9a7c581bc8789d"
+    },
+    "app/src/main/res/drawable/bg_premium_server_icon.xml": {
+      "existed": true,
+      "sha256_before": "50b4934d5cfbf6336a25ac5038621aef6f9236912e08b77f4db3e5cdd188e276"
+    },
+    "app/src/main/res/drawable/bg_premium_speed_icon.xml": {
+      "existed": true,
+      "sha256_before": "65c807c3719ce87d5cbd075c3858234fd5749f7e908d662c119f128b700ab9d3"
+    },
+    "app/src/main/res/layout/activity_main.xml": {
+      "existed": true,
+      "sha256_before": "2fad71d97cf4e967405333db6cc0d309085f2e8d626ba1e7e52a8b1850c26422"
+    },
+    "app/src/main/res/layout/bottom_sheet_battery_optimization.xml": {
+      "existed": true,
+      "sha256_before": "94f08c44f107a394550dc0d107b921cd15c1ab60914ea51162cc81fcb64710af"
+    },
+    "app/src/main/res/layout/bottom_sheet_subscription_progress.xml": {
+      "existed": true,
+      "sha256_before": "32538b169dad54935940d30ff4206ef5793d5377df272fd6067d35eacbbfaaf6"
+    },
+    "app/src/main/res/values-fa/strings.xml": {
+      "existed": true,
+      "sha256_before": "20d1a65c921240a20b6f4bb68a4f6fb4199a68061f8ab0be9f32e2569028091d"
+    },
+    "app/src/main/res/values/colors_vico_premium.xml": {
+      "existed": true,
+      "sha256_before": "bf2e1ae917aba909473c67e207206cc34de79ac3d50a274cb9bc8418feb30213"
+    },
+    "app/src/main/res/values/strings.xml": {
+      "existed": true,
+      "sha256_before": "ceade3d5064cd4a3319ed27f62b3fa04059a2cdf8440a1da81351193399970b4"
+    },
+    "app\\src\\main\\AndroidManifest.xml": {
+      "existed": true,
+      "sha256_before": "54201ccbeb524132c7223633a7d2dff3148468cbfa9a424d4a888ab733fc83c6"
+    }
+  },
+  "bundle_version": "2026-07-25-premium-smart-1",
+  "applied_files": [
+    "app/src/main/java/com/vicovpn/client/MainActivity.kt",
+    "app/src/main/java/com/vicovpn/client/model/ProxyProfile.kt",
+    "app/src/main/java/com/vicovpn/client/net/NetworkStateMonitor.kt",
+    "app/src/main/java/com/vicovpn/client/parser/ShareLinkParser.kt",
+    "app/src/main/java/com/vicovpn/client/server/ServerStore.kt",
+    "app/src/main/java/com/vicovpn/client/subscription/FreeServerSettings.kt",
+    "app/src/main/java/com/vicovpn/client/subscription/HttpTextClient.kt",
+    "app/src/main/java/com/vicovpn/client/subscription/NativeBatchDelayTester.kt",
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionContentParser.kt",
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionImporter.kt",
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionRegistryClient.kt",
+    "app/src/main/java/com/vicovpn/client/ui/AmbientSmokeView.kt",
+    "app/src/main/java/com/vicovpn/client/ui/ConnectionOrbView.kt",
+    "app/src/main/java/com/vicovpn/client/util/BatteryOptimizationHelper.kt",
+    "app/src/main/java/com/vicovpn/client/vpn/VicoVpnService.kt",
+    "app/src/main/java/com/vicovpn/client/xray/XrayConfigBuilder.kt",
+    "app/src/main/java/com/vicovpn/client/xray/XrayNativeBridge.kt",
+    "app/src/main/res/drawable/bg_nav_item_selected.xml",
+    "app/src/main/res/drawable/bg_nav_item_transparent.xml",
+    "app/src/main/res/drawable/bg_premium_offline_icon.xml",
+    "app/src/main/res/drawable/bg_premium_server_icon.xml",
+    "app/src/main/res/drawable/bg_premium_speed_icon.xml",
+    "app/src/main/res/layout/activity_main.xml",
+    "app/src/main/res/layout/bottom_sheet_battery_optimization.xml",
+    "app/src/main/res/layout/bottom_sheet_subscription_progress.xml",
+    "app/src/main/res/values-fa/strings.xml",
+    "app/src/main/res/values/colors_vico_premium.xml",
+    "app/src/main/res/values/strings.xml"
+  ],
+  "sha256_after": {
+    "app/src/main/java/com/vicovpn/client/MainActivity.kt": "81d3a8258539390b4e0a8678130b361a74c9961d1b11b18db8f7acd10f441459",
+    "app/src/main/java/com/vicovpn/client/model/ProxyProfile.kt": "460d7efe86bdd8b3c867254d0a1290a84332c9199a7d5561308ce9e3e98dec6a",
+    "app/src/main/java/com/vicovpn/client/net/NetworkStateMonitor.kt": "06fc45bab49000a7773852401e0fd957155b301aaf3277881cb73793d97fa708",
+    "app/src/main/java/com/vicovpn/client/parser/ShareLinkParser.kt": "9ec0915005d483a1e3a3c2c930c08868bd6285bc51c731140171a673c3c0d4e0",
+    "app/src/main/java/com/vicovpn/client/server/ServerStore.kt": "34c0505d0006e6defbe67029956fae8a79cb7fb905109f7788b6eccc3fa086bc",
+    "app/src/main/java/com/vicovpn/client/subscription/FreeServerSettings.kt": "fcd3547508372cc5c59cc3d11303e7d78dd56222f0c762ed47de8808a05d16d8",
+    "app/src/main/java/com/vicovpn/client/subscription/HttpTextClient.kt": "2ef5610c6512648ff5f8ec9141ae7bbc3665980f17dfe1922a39019d76d1d8b0",
+    "app/src/main/java/com/vicovpn/client/subscription/NativeBatchDelayTester.kt": "7bece7fc58900f3437826ea84b67393ff64326ac18310ad60dcb3234ce741cc1",
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionContentParser.kt": "c14146f3859affb37d5ebd40dbfcf9cd21ea2ae99d8f573671726101a4cda52b",
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionImporter.kt": "41bcff208b5b4c78a093c4a9494a8f589110c648fd2ec857e24bb1c2e314b0a4",
+    "app/src/main/java/com/vicovpn/client/subscription/SubscriptionRegistryClient.kt": "2595ca1e9f5340acffc2d592966ddec795fdc36dcc07298e7c85aaea8800824b",
+    "app/src/main/java/com/vicovpn/client/ui/AmbientSmokeView.kt": "a6c3111fe84e941142f0bcb527f80ddfd3e517906ea574eb6b0bd723f8fd2ea7",
+    "app/src/main/java/com/vicovpn/client/ui/ConnectionOrbView.kt": "e41eaee572149976813d8aae3c4ef920ff0b3ed8e5ac6304f42c703f332c7985",
+    "app/src/main/java/com/vicovpn/client/util/BatteryOptimizationHelper.kt": "214754e7a61ae02c1fcde28069eac4c1c7b7e191fbe27594f21e5cd420c4ec5d",
+    "app/src/main/java/com/vicovpn/client/vpn/VicoVpnService.kt": "7031b37956d248e3de74b2563af3a9faa102c02fc40163741fd61423389d81c2",
+    "app/src/main/java/com/vicovpn/client/xray/XrayConfigBuilder.kt": "4cfc91eecd0b9af6346aaaa96cc05b571acd7e1998c7adf49d59dbfa265d9eb9",
+    "app/src/main/java/com/vicovpn/client/xray/XrayNativeBridge.kt": "a9add446295e6859013244896dd0ec84636ac0570a60e89fd778cbcbbc1e4c8a",
+    "app/src/main/res/drawable/bg_nav_item_selected.xml": "e53b685fd2bc568e5258c19cb9b99b279e436645e1e845a30abd51855ab8fb39",
+    "app/src/main/res/drawable/bg_nav_item_transparent.xml": "56916fe234baecfaac59c8c163cbcd3ca52360db29cba0ce0a5cb1f2f456dfa7",
+    "app/src/main/res/drawable/bg_premium_offline_icon.xml": "8b84b6e7d8c1ae4de72fb773ca6bd95c3434714014b91fc37a9a7c581bc8789d",
+    "app/src/main/res/drawable/bg_premium_server_icon.xml": "50b4934d5cfbf6336a25ac5038621aef6f9236912e08b77f4db3e5cdd188e276",
+    "app/src/main/res/drawable/bg_premium_speed_icon.xml": "65c807c3719ce87d5cbd075c3858234fd5749f7e908d662c119f128b700ab9d3",
+    "app/src/main/res/layout/activity_main.xml": "2fad71d97cf4e967405333db6cc0d309085f2e8d626ba1e7e52a8b1850c26422",
+    "app/src/main/res/layout/bottom_sheet_battery_optimization.xml": "94f08c44f107a394550dc0d107b921cd15c1ab60914ea51162cc81fcb64710af",
+    "app/src/main/res/layout/bottom_sheet_subscription_progress.xml": "32538b169dad54935940d30ff4206ef5793d5377df272fd6067d35eacbbfaaf6",
+    "app/src/main/res/values-fa/strings.xml": "20d1a65c921240a20b6f4bb68a4f6fb4199a68061f8ab0be9f32e2569028091d",
+    "app/src/main/res/values/colors_vico_premium.xml": "bf2e1ae917aba909473c67e207206cc34de79ac3d50a274cb9bc8418feb30213",
+    "app/src/main/res/values/strings.xml": "ceade3d5064cd4a3319ed27f62b3fa04059a2cdf8440a1da81351193399970b4"
+  }
+}

@@ -1,0 +1,82 @@
+name: Sync GitHub Wiki
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "docs/wiki/**"
+      - ".github/workflows/wiki-sync.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wiki-sync-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Publish docs/wiki to repository Wiki
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      WIKI_TOKEN: ${{ secrets.WIKI_TOKEN }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate Wiki token
+        shell: bash
+        run: |
+          if [[ -z "${WIKI_TOKEN}" ]]; then
+            echo "Repository secret WIKI_TOKEN is missing."
+            echo "Create a classic PAT with repo access, then save it as WIKI_TOKEN."
+            exit 1
+          fi
+
+      - name: Clone Wiki repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          WIKI_URL="https://x-access-token:${WIKI_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+
+          if ! git clone "${WIKI_URL}" wiki-repository; then
+            echo "The Wiki repository could not be cloned."
+            echo "Enable Wiki in repository settings and create the first Home page once."
+            exit 1
+          fi
+
+      - name: Synchronize Wiki pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          rsync \
+            -a \
+            --delete \
+            --exclude ".git" \
+            docs/wiki/ \
+            wiki-repository/
+
+      - name: Commit and push Wiki changes
+        working-directory: wiki-repository
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add --all
+
+          if git diff --cached --quiet; then
+            echo "Wiki is already up to date."
+            exit 0
+          fi
+
+          git commit -m "docs: synchronize repository wiki"
+          git push origin HEAD

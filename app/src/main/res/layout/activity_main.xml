@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/rootContainer" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/vico_premium_background">
+
+    <com.vicovpn.client.ui.AmbientSmokeView android:id="@+id/ambientBackground" android:layout_width="match_parent" android:layout_height="match_parent" android:importantForAccessibility="no" />
+
+    <FrameLayout android:id="@+id/screenContainer" android:layout_width="match_parent" android:layout_height="match_parent">
+
+        <androidx.core.widget.NestedScrollView android:id="@+id/connectionSection" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:fillViewport="true" android:overScrollMode="never" android:scrollbars="none">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingTop="6dp" android:paddingEnd="20dp" android:paddingBottom="18dp" android:id="@+id/connectionContent">
+
+                <com.google.android.material.card.MaterialCardView android:id="@+id/offlineBanner" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="14dp" android:visibility="gone" app:cardBackgroundColor="@color/vico_premium_offline" app:cardCornerRadius="24dp" app:strokeColor="@color/vico_premium_offline_stroke" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal" android:padding="14dp">
+
+                        <FrameLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_premium_offline_icon">
+
+                            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_wifi_off" app:tint="@color/vico_premium_white" />
+
+                        </FrameLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_weight="1" android:orientation="vertical">
+
+                            <TextView android:id="@+id/offlineMessageText" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/no_internet_connection" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="@string/turn_on_wifi_or_mobile_data" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton android:id="@+id/openNetworkSettingsButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content" android:layout_height="44dp" android:minWidth="0dp" android:text="@string/turn_on" android:textAllCaps="false" android:textColor="@color/vico_premium_orange" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                                                                <LinearLayout android:id="@+id/connectionHeaderBar" android:layout_width="match_parent" android:layout_height="52dp" android:baselineAligned="false" android:gravity="center_vertical" android:layoutDirection="ltr" android:orientation="horizontal">
+
+                    <FrameLayout android:layout_width="56dp" android:layout_height="52dp">
+
+                        <com.google.android.material.card.MaterialCardView android:id="@+id/statusIconCard" android:layout_width="1dp" android:layout_height="1dp" android:visibility="gone">
+
+                            <ImageView android:id="@+id/statusIcon" android:layout_width="1dp" android:layout_height="1dp" />
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView android:id="@+id/announcementBellCard" android:layout_width="44dp" android:layout_height="44dp" android:layout_gravity="start|center_vertical" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackgroundBorderless" android:visibility="gone" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="22dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                            <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent">
+
+                                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_home_notifications_outline" app:tint="@color/vico_premium_white" />
+
+                                <TextView android:id="@+id/announcementBadge" android:layout_width="19dp" android:layout_height="19dp" android:layout_gravity="top|end" android:background="@drawable/bg_premium_offline_icon" android:fontFamily="sans-serif-medium" android:gravity="center" android:text="1" android:textColor="@android:color/white" android:textDirection="ltr" android:textSize="9sp" android:visibility="gone" />
+
+                            </FrameLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                    </FrameLayout>
+
+                    <TextView android:id="@+id/connectionTimerText" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:ellipsize="end" android:fontFamily="sans-serif-medium" android:gravity="center" android:maxLines="1" android:text="00:00:00" android:textColor="@color/vico_premium_orange" android:textDirection="ltr" android:textSize="18sp" android:visibility="gone" />
+
+                    <LinearLayout android:id="@+id/connectionStatusGroup" android:layout_width="132dp" android:layout_height="wrap_content" android:gravity="end" android:layoutDirection="locale" android:orientation="vertical">
+
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:ellipsize="end" android:fontFamily="sans-serif" android:gravity="end" android:maxLines="1" android:text="@string/status_connection" android:textColor="@color/vico_premium_muted" android:textDirection="locale" android:textSize="12sp" />
+
+                        <TextView android:id="@+id/statusText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:ellipsize="end" android:fontFamily="sans-serif-medium" android:gravity="end" android:maxLines="1" android:text="@string/status_disconnected" android:textColor="@color/vico_premium_white" android:textDirection="locale" android:textSize="17sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="72dp" android:layout_marginTop="10dp" android:orientation="horizontal" android:weightSum="2">
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginEnd="6dp" android:layout_weight="1" app:cardBackgroundColor="@color/vico_speed_icon_surface" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_speed_icon_outline" app:strokeWidth="1dp">
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="12dp" android:paddingEnd="12dp">
+
+                            <FrameLayout android:layout_width="52dp" android:layout_height="52dp" android:background="@drawable/bg_premium_speed_icon">
+
+                                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_upload" app:tint="@color/vico_premium_orange" />
+
+                            </FrameLayout>
+
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:orientation="vertical">
+
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/uploaded" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+
+                                <TextView android:id="@+id/sessionUploadText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif-medium" android:text="0 B/s" android:textColor="@color/vico_premium_white" android:textDirection="ltr" android:textSize="18sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="6dp" android:layout_weight="1" app:cardBackgroundColor="@color/vico_speed_icon_surface" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_speed_icon_outline" app:strokeWidth="1dp">
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="12dp" android:paddingEnd="12dp">
+
+                            <FrameLayout android:layout_width="52dp" android:layout_height="52dp" android:background="@drawable/bg_premium_speed_icon">
+
+                                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_download" app:tint="@color/vico_premium_orange" />
+
+                            </FrameLayout>
+
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:layout_weight="1" android:orientation="vertical">
+
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/downloaded" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+
+                                <TextView android:id="@+id/sessionDownloadText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif-medium" android:text="0 B/s" android:textColor="@color/vico_premium_white" android:textDirection="ltr" android:textSize="18sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/publicBannerContainer" android:layout_width="1dp" android:layout_height="1dp" android:layout_marginTop="0dp" android:orientation="vertical" android:visibility="gone" />
+
+                <FrameLayout android:layout_width="match_parent" android:layout_height="246dp" android:layout_marginTop="0dp" android:id="@+id/connectionHeroContainer">
+
+                    <com.vicovpn.client.ui.ConnectionOrbView android:id="@+id/connectionOrb" android:layout_width="match_parent" android:layout_height="match_parent" android:contentDescription="@null" android:importantForAccessibility="no" android:visibility="gone" />
+
+                    <com.vicovpn.client.ui.ConnectionHaloView android:id="@+id/connectionHalo" android:layout_width="match_parent" android:layout_height="match_parent" android:clickable="false" android:focusable="false" android:importantForAccessibility="no" android:contentDescription="@null" android:visibility="gone" />
+
+
+                    <FrameLayout android:layout_width="176dp" android:layout_height="176dp" android:layout_gravity="center" android:clipChildren="false" android:clipToPadding="false">
+
+
+                        <com.google.android.material.button.MaterialButton android:id="@+id/connectButton" android:layout_width="match_parent" android:layout_height="match_parent" android:backgroundTint="@color/vico_premium_power_off" android:contentDescription="@string/connect" android:elevation="0dp" android:stateListAnimator="@null" android:translationZ="0dp" android:insetLeft="0dp" android:insetTop="0dp" android:insetRight="0dp" android:insetBottom="0dp" android:minHeight="0dp" android:minWidth="0dp" android:text="" app:cornerRadius="88dp" app:rippleColor="@color/vico_connect_clean_ripple" app:strokeColor="@color/vico_connect_clean_stroke" app:strokeWidth="1dp" android:outlineProvider="none" android:clipToOutline="false" />
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:clickable="false" android:gravity="center" android:importantForAccessibility="no" android:orientation="vertical" android:elevation="32dp" android:translationZ="32dp" android:focusable="false">
+
+                            <ImageView android:id="@+id/connectionPowerIcon" android:layout_width="50dp" android:layout_height="50dp" android:contentDescription="@null" android:src="@drawable/ic_power_pixel" app:tint="@android:color/white" />
+
+                            <TextView android:id="@+id/connectionActionText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif-medium" android:text="@string/connect" android:textColor="@android:color/white" android:textSize="15sp" android:maxLines="1" android:ellipsize="end" />
+
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                    <com.vicovpn.client.ui.ConnectedSuccessView android:id="@+id/connectedSuccessView" android:layout_width="match_parent" android:layout_height="match_parent" android:clickable="false" android:focusable="false" android:importantForAccessibility="no" android:visibility="gone" />
+
+                </FrameLayout>
+
+                <com.google.android.material.card.MaterialCardView android:id="@+id/connectionPriorityCard" android:layout_width="match_parent" android:layout_height="60dp" android:layout_marginBottom="8dp" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="25dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="18dp" android:paddingEnd="18dp">
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
+
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/connection_priority_title" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+
+                            <TextView android:id="@+id/connectionPriorityValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:ellipsize="end" android:maxLines="1" android:text="@string/connection_priority_vip_free" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+
+                        </LinearLayout>
+
+                        <TextView android:layout_width="40dp" android:layout_height="40dp" android:gravity="center" android:text="›" android:textColor="@color/vico_premium_orange" android:textSize="26sp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:id="@+id/noActiveServerCard" android:layout_width="match_parent" android:layout_height="74dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="30dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="14dp" android:paddingEnd="12dp">
+
+                        <FrameLayout android:layout_width="52dp" android:layout_height="52dp" android:background="@drawable/bg_premium_server_icon">
+
+                            <ImageView android:layout_width="26dp" android:layout_height="26dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_server_fast" app:tint="@color/vico_premium_orange" />
+
+                        </FrameLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical">
+
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/no_active_server" android:textColor="@color/vico_premium_white" android:textSize="16sp" />
+
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:fontFamily="sans-serif" android:text="@string/smart_server_selection_description" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton android:id="@+id/openServersButton" style="@style/Widget.Material3.Button.TextButton" android:layout_width="wrap_content" android:layout_height="46dp" android:minWidth="0dp" android:text="@string/open_servers" android:textAllCaps="false" android:textColor="@color/vico_premium_orange" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:id="@+id/activeServerCard" android:layout_width="match_parent" android:layout_height="72dp" android:visibility="gone" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="22dp" android:paddingEnd="22dp">
+
+                        <TextView android:id="@+id/activeServerName" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:ellipsize="end" android:fontFamily="sans-serif-medium" android:maxLines="1" android:textColor="@color/vico_premium_white" android:textSize="17sp" android:gravity="start|center_vertical" android:textDirection="locale" />
+
+                        <TextView android:id="@+id/activeServerLatencyText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="—" android:textColor="@color/vico_premium_white" android:textDirection="ltr" android:textSize="16sp" android:layout_marginStart="16dp" android:maxLines="1" />
+
+                        <TextView android:id="@+id/activeServerDetails" android:layout_width="1dp" android:layout_height="1dp" android:visibility="gone" />
+
+                        <TextView android:id="@+id/activeServerAddress" android:layout_width="1dp" android:layout_height="1dp" android:visibility="gone" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout android:layout_width="1dp" android:layout_height="1dp" android:visibility="gone">
+
+                    <TextView android:id="@+id/exitIpText" android:layout_width="1dp" android:layout_height="1dp" />
+                    <TextView android:id="@+id/exitLocationText" android:layout_width="1dp" android:layout_height="1dp" />
+                    <TextView android:id="@+id/exitNetworkText" android:layout_width="1dp" android:layout_height="1dp" />
+                    <TextView android:id="@+id/lifetimeDownloadText" android:layout_width="1dp" android:layout_height="1dp" />
+                    <TextView android:id="@+id/lifetimeUploadText" android:layout_width="1dp" android:layout_height="1dp" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/connectFreeButton" android:layout_width="1dp" android:layout_height="1dp" android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.core.widget.NestedScrollView android:id="@+id/serversSection" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:fillViewport="true" android:overScrollMode="never" android:visibility="gone">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingTop="12dp" android:paddingEnd="20dp" android:paddingBottom="24dp">
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/nav_servers" android:textColor="@color/vico_premium_white" android:textSize="28sp" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:fontFamily="sans-serif" android:text="@string/servers_premium_subtitle" android:textColor="@color/vico_premium_muted" android:textSize="14sp" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="22dp" android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton android:id="@+id/clipboardImportButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginEnd="6dp" android:layout_weight="1" android:backgroundTint="@color/vico_premium_card" android:text="@string/import_from_clipboard" android:textAllCaps="false" android:textColor="@color/vico_premium_white" app:cornerRadius="22dp" app:icon="@drawable/ic_clipboard" app:iconTint="@color/vico_premium_orange" app:strokeColor="@color/vico_premium_outline" />
+
+                    <com.google.android.material.button.MaterialButton android:id="@+id/qrImportButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="6dp" android:layout_weight="1" android:backgroundTint="@color/vico_premium_card" android:text="@string/scan_qr" android:textAllCaps="false" android:textColor="@color/vico_premium_white" app:cornerRadius="22dp" app:icon="@drawable/ic_qr" app:iconTint="@color/vico_premium_orange" app:strokeColor="@color/vico_premium_outline" />
+
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="14dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/free_servers" android:textColor="@color/vico_premium_white" android:textSize="17sp" />
+
+                        <TextView android:id="@+id/registryUrlText" android:layout_width="match_parent" android:layout_height="wrap_content" android:visibility="gone" android:layout_marginTop="7dp" android:ellipsize="middle" android:fontFamily="sans-serif" android:maxLines="1" android:textColor="@color/vico_premium_muted" android:textDirection="ltr" android:textSize="12sp" />
+
+                        <TextView android:id="@+id/subscriptionLastResultText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:textColor="@color/vico_premium_muted" android:textSize="13sp" />
+
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="56dp" android:layout_marginTop="16dp" android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton android:id="@+id/loadFreeSubscriptionsButton" android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginEnd="6dp" android:layout_weight="1" android:backgroundTint="@color/vico_premium_orange" android:text="@string/load_free_subscriptions" android:textAllCaps="false" android:textColor="@color/vico_premium_white" app:cornerRadius="22dp" app:icon="@drawable/ic_refresh" app:iconTint="@color/vico_premium_white" />
+
+                            <com.google.android.material.button.MaterialButton android:id="@+id/manageRegistryButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="56dp" android:layout_height="match_parent" android:backgroundTint="@color/vico_premium_card_alt" android:contentDescription="@string/manage_registry" android:insetLeft="0dp" android:insetRight="0dp" android:minWidth="0dp" android:text="" app:cornerRadius="22dp" app:icon="@drawable/ic_tune" app:iconGravity="textStart" app:iconPadding="0dp" app:iconTint="@color/vico_premium_orange" app:strokeColor="@color/vico_premium_outline" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:id="@+id/serversEmptyCard" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:orientation="vertical" android:padding="26dp">
+
+                        <ImageView android:layout_width="40dp" android:layout_height="40dp" android:contentDescription="@null" android:src="@drawable/ic_server_stack" app:tint="@color/vico_premium_orange" />
+
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:fontFamily="sans-serif-medium" android:gravity="center" android:text="@string/no_servers_saved" android:textColor="@color/vico_premium_white" android:textSize="16sp" />
+
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:fontFamily="sans-serif" android:gravity="center" android:text="@string/no_servers_saved_description" android:textColor="@color/vico_premium_muted" android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout android:id="@+id/serversListContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.core.widget.NestedScrollView android:id="@+id/logsSection" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:fillViewport="true" android:overScrollMode="never" android:visibility="gone">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingTop="12dp" android:paddingEnd="20dp" android:paddingBottom="24dp">
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/nav_logs" android:textColor="@color/vico_premium_white" android:textSize="28sp" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:fontFamily="sans-serif" android:text="@string/logs_premium_subtitle" android:textColor="@color/vico_premium_muted" android:textSize="14sp" />
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp">
+
+                        <LinearLayout android:id="@+id/logsActionRow" android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginBottom="14dp" android:orientation="horizontal">
+
+                            <com.google.android.material.button.MaterialButton android:id="@+id/expandLogsButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginEnd="5dp" android:layout_weight="1" android:backgroundTint="@color/vico_premium_card_alt" android:ellipsize="end" android:maxLines="1" android:minWidth="0dp" android:text="@string/expand_logs" android:textAllCaps="false" android:textColor="@color/vico_premium_white" android:textSize="12sp" app:cornerRadius="18dp" app:icon="@drawable/ic_expand" app:iconPadding="5dp" app:iconSize="18dp" app:iconTint="@color/vico_premium_orange" app:strokeColor="@color/vico_premium_outline" />
+
+                            <com.google.android.material.button.MaterialButton android:id="@+id/copyDiagnosticsButton" style="@style/Widget.Material3.Button.OutlinedButton" android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="5dp" android:layout_weight="1" android:backgroundTint="@color/vico_premium_card_alt" android:maxLines="1" android:minWidth="0dp" android:text="@string/copy" android:textAllCaps="false" android:textColor="@color/vico_premium_white" android:textSize="12sp" android:visibility="gone" app:cornerRadius="18dp" app:icon="@drawable/ic_copy" app:iconPadding="5dp" app:iconSize="18dp" app:iconTint="@color/vico_premium_orange" app:strokeColor="@color/vico_premium_outline" />
+
+                        </LinearLayout>
+
+                        <TextView android:id="@+id/diagnosticsText" android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="monospace" android:lineSpacingExtra="3dp" android:textColor="@color/vico_premium_text_secondary" android:textDirection="ltr" android:textIsSelectable="true" android:textSize="12sp" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.core.widget.NestedScrollView android:id="@+id/settingsSection" android:layout_width="match_parent" android:layout_height="match_parent" android:clipToPadding="false" android:fillViewport="true" android:overScrollMode="never" android:visibility="gone">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="20dp" android:paddingTop="12dp" android:paddingEnd="20dp" android:paddingBottom="24dp">
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/nav_settings" android:textColor="@color/vico_premium_white" android:textSize="28sp" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:fontFamily="sans-serif" android:text="@string/settings_premium_subtitle" android:textColor="@color/vico_premium_muted" android:textSize="14sp" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:fontFamily="sans-serif-medium" android:text="@string/appearance" android:textColor="@color/vico_premium_section_label" android:textSize="13sp" />
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                        <LinearLayout android:id="@+id/settingsLanguageButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon">
+                                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_language" app:tint="@color/vico_premium_orange" />
+                            </FrameLayout>
+
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical">
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/change_language" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="@string/language_setting_description" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+
+                        <LinearLayout android:id="@+id/settingsThemeButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon">
+                                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_palette" app:tint="@color/vico_premium_orange" />
+                            </FrameLayout>
+
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical">
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/change_theme" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="@string/theme_setting_description" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+
+                        <LinearLayout android:id="@+id/settingsAnnouncementButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon">
+
+                                <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_home_notifications_outline" app:tint="@color/vico_premium_orange" />
+
+                            </FrameLayout>
+
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical">
+
+                                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/home_notifications_setting" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+
+                                <TextView android:id="@+id/settingsAnnouncementValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="@string/home_notifications_hidden" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+
+                            </LinearLayout>
+
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:fontFamily="sans-serif-medium" android:text="@string/connection_behavior" android:textColor="@color/vico_premium_section_label" android:textSize="13sp" />
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:id="@+id/settingsSplitTunnelingButton" android:layout_width="match_parent" android:layout_height="76dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+
+                        <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon">
+
+                            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_split_tunnel" />
+                        </FrameLayout>
+
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical">
+
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/split_tunneling" android:textColor="@color/vico_premium_white" android:textSize="15sp" />
+
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="@string/split_tunneling_short_description" android:textColor="@color/vico_premium_muted" android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:fontFamily="sans-serif-medium" android:text="@string/free_server_settings" android:textColor="@color/vico_premium_section_label" android:textSize="13sp" />
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+
+                        <LinearLayout android:id="@+id/settingsRegistryButton" android:layout_width="match_parent" android:layout_height="76dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_link" app:tint="@color/vico_premium_orange" /></FrameLayout>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/subscription_registry" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><TextView android:id="@+id/settingsRegistryValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:ellipsize="middle" android:fontFamily="sans-serif" android:maxLines="1" android:textColor="@color/vico_premium_muted" android:textDirection="ltr" android:textSize="12sp" /></LinearLayout>
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+
+                        <LinearLayout android:id="@+id/settingsTestModeButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_speed" app:tint="@color/vico_premium_orange" /></FrameLayout>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/testing_mode" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><TextView android:id="@+id/settingsTestModeValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:textColor="@color/vico_premium_muted" android:textSize="12sp" /></LinearLayout>
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+
+                        <LinearLayout android:id="@+id/settingsMaxServersButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_server_stack" app:tint="@color/vico_premium_orange" /></FrameLayout>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/maximum_saved_free_servers" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><TextView android:id="@+id/settingsMaxServersValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:textColor="@color/vico_premium_muted" android:textSize="12sp" /></LinearLayout>
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+
+                        <LinearLayout android:id="@+id/settingsWifiOnlyButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_wifi" app:tint="@color/vico_premium_orange" /></FrameLayout>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/update_only_on_wifi" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><TextView android:id="@+id/settingsWifiOnlyValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:textColor="@color/vico_premium_muted" android:textSize="12sp" /></LinearLayout>
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+
+                        <LinearLayout android:id="@+id/settingsAutoRefreshButton" android:layout_width="match_parent" android:layout_height="72dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp">
+                            <FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_refresh" app:tint="@color/vico_premium_orange" /></FrameLayout>
+                            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:orientation="vertical"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif-medium" android:text="@string/automatic_refresh" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><TextView android:id="@+id/settingsAutoRefreshValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:textColor="@color/vico_premium_muted" android:textSize="12sp" /></LinearLayout>
+                            <ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_chevron_right" app:tint="@color/vico_premium_nav_icon" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:fontFamily="sans-serif-medium" android:text="@string/community_and_support" android:textColor="@color/vico_premium_section_label" android:textSize="13sp" />
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" app:cardBackgroundColor="@color/vico_premium_card" app:cardCornerRadius="28dp" app:strokeColor="@color/vico_premium_outline" app:strokeWidth="1dp">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+                        <LinearLayout android:id="@+id/telegramBotButton" android:layout_width="match_parent" android:layout_height="68dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp"><FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_bot" app:tint="@color/vico_premium_orange" /></FrameLayout><TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:fontFamily="sans-serif-medium" android:text="@string/telegram_bot" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_open_external" app:tint="@color/vico_premium_nav_icon" /></LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+                        <LinearLayout android:id="@+id/telegramChannelButton" android:layout_width="match_parent" android:layout_height="68dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp"><FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_channel" app:tint="@color/vico_premium_orange" /></FrameLayout><TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:fontFamily="sans-serif-medium" android:text="@string/telegram_channel" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_open_external" app:tint="@color/vico_premium_nav_icon" /></LinearLayout>
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginStart="70dp" android:background="@color/vico_premium_divider" />
+                        <LinearLayout android:id="@+id/telegramFeedbackButton" android:layout_width="match_parent" android:layout_height="68dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="14dp"><FrameLayout android:layout_width="42dp" android:layout_height="42dp" android:background="@drawable/bg_premium_setting_icon"><ImageView android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center" android:contentDescription="@null" android:src="@drawable/ic_feedback" app:tint="@color/vico_premium_orange" /></FrameLayout><TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="13dp" android:layout_weight="1" android:fontFamily="sans-serif-medium" android:text="@string/send_feedback" android:textColor="@color/vico_premium_white" android:textSize="15sp" /><ImageView android:layout_width="20dp" android:layout_height="20dp" android:contentDescription="@null" android:src="@drawable/ic_open_external" app:tint="@color/vico_premium_nav_icon" /></LinearLayout>
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </FrameLayout>
+
+    
+
+<com.google.android.material.card.MaterialCardView android:id="@+id/discoveryMiniCard" android:layout_width="wrap_content" android:layout_height="52dp" android:layout_gravity="bottom|center_horizontal" android:layout_marginTop="0dp" android:layout_marginEnd="24dp" android:clickable="true" android:elevation="0dp" android:focusable="true" android:foreground="?attr/selectableItemBackground" android:visibility="gone" app:cardBackgroundColor="@color/vico_premium_nav" app:cardCornerRadius="26dp" app:strokeColor="@color/vico_premium_nav_outline" app:strokeWidth="1dp" android:layout_marginStart="24dp" android:layout_marginBottom="96dp">
+
+        <LinearLayout android:layout_width="wrap_content" android:layout_height="match_parent" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="14dp" android:paddingEnd="16dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator android:id="@+id/discoveryMiniProgress" android:layout_width="24dp" android:layout_height="24dp" android:indeterminate="true" app:indicatorColor="@color/vico_premium_orange" app:indicatorSize="22dp" app:trackColor="@color/vico_premium_outline" app:trackThickness="3dp" />
+
+            <TextView android:id="@+id/discoveryMiniText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:ellipsize="end" android:maxLines="1" android:text="@string/discovery_background_working" android:textColor="@color/vico_premium_white" android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout android:id="@+id/bottomNavCard" android:layout_width="match_parent" android:layout_height="72dp" android:layout_gravity="bottom" android:layout_marginStart="18dp" android:layout_marginEnd="18dp" android:layout_marginBottom="14dp" android:baselineAligned="false" android:clipChildren="false" android:clipToPadding="false" android:gravity="center_vertical" android:layoutDirection="locale" android:orientation="horizontal">
+
+        <com.google.android.material.card.MaterialCardView android:id="@+id/profileNavCard" android:layout_width="60dp" android:layout_height="60dp" android:layout_gravity="center_vertical" android:background="@drawable/bg_liquid_glass" android:elevation="0dp" app:cardBackgroundColor="@android:color/transparent" app:cardCornerRadius="30dp" app:cardElevation="0dp" app:cardUseCompatPadding="false" app:strokeColor="@color/vico_premium_nav_outline" app:strokeWidth="1dp">
+
+            <FrameLayout android:id="@+id/navProfileQuick" android:layout_width="match_parent" android:layout_height="match_parent" android:clickable="true" android:focusable="true" android:foreground="?attr/selectableItemBackgroundBorderless">
+
+                <ImageView android:layout_width="27dp" android:layout_height="27dp" android:layout_gravity="center" android:contentDescription="@string/nav_settings" android:src="@drawable/ic_nav_profile_outline" app:tint="@color/vico_premium_nav_icon" />
+
+            </FrameLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <Space android:layout_width="10dp" android:layout_height="1dp" />
+
+        <com.google.android.material.card.MaterialCardView android:id="@+id/bottomNavPill" android:layout_width="0dp" android:layout_height="60dp" android:layout_gravity="center_vertical" android:layout_weight="1" android:background="@drawable/bg_liquid_glass" android:clipChildren="true" android:clipToPadding="true" android:elevation="0dp" app:cardBackgroundColor="@android:color/transparent" app:cardCornerRadius="30dp" app:cardElevation="0dp" app:cardUseCompatPadding="false" app:strokeColor="@color/vico_premium_nav_outline" app:strokeWidth="1dp">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:baselineAligned="false" android:gravity="center" android:orientation="horizontal" android:paddingStart="7dp" android:paddingEnd="7dp">
+
+                <LinearLayout android:id="@+id/navSettings" android:layout_width="0dp" android:layout_height="46dp" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:layout_weight="1" android:background="@drawable/bg_nav_item_transparent" android:clickable="true" android:focusable="true" android:gravity="center">
+
+                    <ImageView android:id="@+id/navSettingsIcon" android:layout_width="26dp" android:layout_height="26dp" android:contentDescription="@string/nav_settings" android:src="@drawable/ic_nav_settings_gear" app:tint="@color/vico_premium_nav_icon" />
+
+                    <TextView android:id="@+id/navSettingsText" android:layout_width="1dp" android:layout_height="1dp" android:text="@string/nav_settings" android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/navLogs" android:layout_width="0dp" android:layout_height="46dp" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:layout_weight="1" android:background="@drawable/bg_nav_item_transparent" android:clickable="true" android:focusable="true" android:gravity="center">
+
+                    <ImageView android:id="@+id/navLogsIcon" android:layout_width="26dp" android:layout_height="26dp" android:contentDescription="@string/nav_logs" android:src="@drawable/ic_nav_monitor" app:tint="@color/vico_premium_nav_icon" />
+
+                    <TextView android:id="@+id/navLogsText" android:layout_width="1dp" android:layout_height="1dp" android:text="@string/nav_logs" android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/navServers" android:layout_width="0dp" android:layout_height="46dp" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:layout_weight="1" android:background="@drawable/bg_nav_item_transparent" android:clickable="true" android:focusable="true" android:gravity="center">
+
+                    <ImageView android:id="@+id/navServersIcon" android:layout_width="26dp" android:layout_height="26dp" android:contentDescription="@string/nav_servers" android:src="@drawable/ic_nav_folder_key" app:tint="@color/vico_premium_nav_icon" />
+
+                    <TextView android:id="@+id/navServersText" android:layout_width="1dp" android:layout_height="1dp" android:text="@string/nav_servers" android:visibility="gone" />
+
+                </LinearLayout>
+
+                <LinearLayout android:id="@+id/navConnection" android:layout_width="0dp" android:layout_height="46dp" android:layout_marginStart="2dp" android:layout_marginEnd="2dp" android:layout_weight="1" android:background="@drawable/bg_nav_item_selected_safe" android:clickable="true" android:focusable="true" android:gravity="center">
+
+                    <ImageView android:id="@+id/navConnectionIcon" android:layout_width="26dp" android:layout_height="26dp" android:contentDescription="@string/nav_connection" android:src="@drawable/ic_power_pixel" app:tint="@color/vico_nav_selected_icon" />
+
+                    <TextView android:id="@+id/navConnectionText" android:layout_width="1dp" android:layout_height="1dp" android:text="@string/nav_connection" android:visibility="gone" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="vico_primary">#F06A00</color>
+    <color name="vico_primary_bright">#FF8B16</color>
+    <color name="vico_secondary">#7224E8</color>
+    <color name="vico_secondary_bright">#985CFF</color>
+
+    <color name="vico_background">#F8F6FB</color>
+    <color name="vico_surface">#FFFFFF</color>
+    <color name="vico_surface_variant">#F0ECF5</color>
+
+    <color name="vico_text">#17121E</color>
+    <color name="vico_text_secondary">#69616F</color>
+    <color name="vico_muted">#69616F</color>
+
+    <color name="vico_outline">#DED7E5</color>
+    <color name="vico_error">#BA1A1A</color>
+
+    <color name="vico_nav_glass">#F2FFFFFF</color>
+    <color name="vico_nav_selected">#EEE8F3</color>
+    <color name="vico_nav_icon">#746C7C</color>
+
+</resources>

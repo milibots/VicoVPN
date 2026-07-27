@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="VicoText">
+        <item name="android:fontFamily">@font/vico_text_english</item>
+        <item name="android:textColor">@color/vico_text</item>
+    </style>
+
+    <style name="VicoText.Title">
+        <item name="android:fontFamily">@font/vico_header_titles_english</item>
+        <item name="android:textColor">@color/vico_text</item>
+    </style>
+
+    <style name="VicoText.Title.Large">
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="VicoText.Title.Medium">
+        <item name="android:textSize">21sp</item>
+    </style>
+
+    <style name="VicoText.Body">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="VicoText.Label">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/vico_muted</item>
+    </style>
+
+    <style name="VicoText.Button">
+        <item name="android:fontFamily">@font/vico_header_titles_english</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+</resources>

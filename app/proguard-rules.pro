@@ -1,0 +1,5 @@
+-keep class libv2ray.** { *; }
+-keep class go.** { *; }
+-keepattributes *Annotation*
+-dontwarn libv2ray.**
+-dontwarn go.**

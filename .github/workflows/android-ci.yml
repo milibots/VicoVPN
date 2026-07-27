@@ -1,0 +1,95 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-debug:
+    name: Lint, test, and build debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle wrapper
+        run: ./gradlew --version
+
+      - name: Lint, unit test, and build
+        run: |
+          ./gradlew \
+            clean \
+            lintDebug \
+            testDebugUnitTest \
+            assembleDebug \
+            --stacktrace \
+            --no-daemon
+
+      - name: Prepare APK artifact
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          APK_PATH="$(find app/build/outputs/apk/debug -type f -name '*.apk' | head -n 1)"
+          if [[ -z "${APK_PATH}" ]]; then
+            echo "Debug APK was not found."
+            exit 1
+          fi
+          cp "${APK_PATH}" "dist/VicoVPN-debug-${GITHUB_SHA::7}.apk"
+          (
+            cd dist
+            sha256sum *.apk > checksums-sha256.txt
+          )
+
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: VicoVPN-debug-${{ github.sha }}
+          path: |
+            dist/*.apk
+            dist/checksums-sha256.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload lint and test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-reports-${{ github.sha }}
+          path: |
+            app/build/reports/**
+            app/build/test-results/**
+          if-no-files-found: ignore
+          retention-days: 14

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="112dp"
+    android:height="112dp"
+    android:viewportWidth="112"
+    android:viewportHeight="112">
+    <path android:fillColor="@color/vico_premium_orange" android:pathData="M56,8 A48,48 0,1 0,56 104 A48,48 0,1 0,56 8 M32,58 L48,74 L82,38 L90,46 L48,88 L24,66 Z" />
+</vector>

@@ -1,0 +1,64 @@
+.gradle/
+.idea/
+local.properties
+**/build/
+*.iml
+app/libs/libv2ray.aar
+app/libs/libv2ray.aar.sha256
+.DS_Store
+
+# GitHub/Android automation additions
+# Android and Gradle
+.gradle/
+**/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+navigation.xml
+assetWizardSettings.xml
+deploymentTargetDropDown.xml
+
+# Signing material and secrets
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+keystore.properties
+signing.properties
+secrets.properties
+.env
+.env.*
+!.env.example
+
+# Generated release files
+dist/
+release/
+*.apk
+*.aab
+mapping.txt
+
+# Local diagnostics and backups
+.vicovpn_*_backups/
+.github_setup_backups/
+.github_setup_state.json
+.vicovpn_crash_diagnostics/
+vicovpn_*_crash_*.zip
+logcat*.txt
+crash*.txt
+
+# Operating systems
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+*.swp
+*.swo

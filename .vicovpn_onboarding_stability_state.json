@@ -1,0 +1,29 @@
+{
+  "backup": ".vicovpn_onboarding_stability_backups\\20260726_003635",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\onboarding\\OnboardingActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\onboarding\\OnboardingAdapter.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_onboarding.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\item_onboarding_slide.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\AndroidManifest.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    }
+  }
+}

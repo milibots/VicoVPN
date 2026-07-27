@@ -1,0 +1,14 @@
+{
+  "backup": ".vicovpn_responsive_nav_backups\\20260727_070047",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\drawable\\bg_nav_item_selected_safe.xml": {
+      "existed": true
+    }
+  }
+}

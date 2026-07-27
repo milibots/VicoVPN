@@ -1,0 +1,53 @@
+{
+  "backup": ".vicovpn_smart_product_backups\\20260725_190427",
+  "files": {
+    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\vpn\\VicoVpnService.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\server\\ServerStore.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\FreeServerSettings.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\NativeBatchDelayTester.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\xray\\XrayNativeBridge.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\ui\\AmbientSmokeView.kt": {
+      "existed": true
+    },
+    "app\\src\\main\\AndroidManifest.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\layout\\activity_main.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-night\\colors_vico_premium.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\res\\values-fa\\strings.xml": {
+      "existed": true
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SmartRefreshScheduler.kt": {
+      "existed": false
+    },
+    "app\\src\\main\\java\\com\\vicovpn\\client\\subscription\\SmartRefreshReceiver.kt": {
+      "existed": false
+    },
+    "app\\src\\main\\res\\drawable\\ic_nav_home_reference.xml": {
+      "existed": false
+    }
+  }
+}

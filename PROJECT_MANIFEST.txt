@@ -1,0 +1,11 @@
+VicoVPN 1.0.0 complete source bundle
+Generated: 2026-07-24
+Package: com.vicovpn.client
+Minimum Android: API 26
+Target/compile Android: API 35
+Native core: AndroidLibXrayLite v26.6.27 / Xray-core v26.6.27
+Architecture: Android VpnService TUN FD -> Xray TUN inbound -> selected proxy outbound
+Protocols: VMess, VLESS, Trojan, Shadowsocks (without external plugins)
+Verification included: pure Kotlin smoke, XML parse, shell syntax, fake-tunnel/TLS-bypass scan
+CI included: SDK install, native AAR bootstrap, unit tests, lint, debug APK build
+Runtime boundary: physical-device routing/DNS/IPv6 testing is required before production release
