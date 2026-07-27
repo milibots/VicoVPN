@@ -11,18 +11,25 @@ android {
         applicationId = "com.vicovpn.client"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
-
+        versionCode = (project.findProperty("VERSION_CODE") as String?)?.toIntOrNull() ?: 1
+        versionName = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
 
-        // Do not install a 32-bit native process on modern 64-bit phones.
-        ndk {
-            abiFilters += listOf("arm64-v8a")
+}
+
+    // BEGIN VicoVPN MANAGED ABI SPLITS
+    // Produces four per-ABI APKs plus one universal APK.
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+            isUniversalApk = true
         }
     }
+    // END VicoVPN MANAGED ABI SPLITS
 
     buildTypes {
         debug {

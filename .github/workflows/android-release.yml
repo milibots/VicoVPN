@@ -10,7 +10,7 @@ on:
       version:
         description: "Release tag, for example v1.0.0"
         required: true
-        default: "v0.1.0"
+        default: "v1.0.0"
 
       prerelease:
         description: "Mark this release as a prerelease"
@@ -33,9 +33,9 @@ concurrency:
 
 jobs:
   release:
-    name: Build and publish APK assets
+    name: Build and publish signed multi-ABI APKs
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     env:
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -54,6 +54,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
             VERSION="${GITHUB_REF_NAME}"
           else
@@ -65,8 +66,21 @@ jobs:
             exit 1
           fi
 
+          VERSION_NAME="${VERSION#v}"
+          VERSION_CODE="${GITHUB_RUN_ID}"
+          VERSION_CODE="$(( VERSION_CODE % 2000000000 ))"
+
+          if [[ "${VERSION_CODE}" -lt 1000 ]]; then
+            VERSION_CODE="$(( VERSION_CODE + 1000 ))"
+          fi
+
           echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
-          echo "Resolved version: ${VERSION}"
+          echo "version_name=${VERSION_NAME}" >> "${GITHUB_OUTPUT}"
+          echo "version_code=${VERSION_CODE}" >> "${GITHUB_OUTPUT}"
+
+          echo "Release tag: ${VERSION}"
+          echo "Android versionName: ${VERSION_NAME}"
+          echo "Android versionCode: ${VERSION_CODE}"
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -74,119 +88,323 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
 
-      - name: Make Gradle wrapper executable
-        shell: bash
-        run: chmod +x ./gradlew
-
-      - name: Build and test debug APK
+      - name: Install Android build tools
         shell: bash
         run: |
           set -euo pipefail
+          sdkmanager \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "platform-tools"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make scripts executable
+        shell: bash
+        run: |
+          chmod +x ./gradlew
+          chmod +x scripts/bootstrap-native.sh
+
+      - name: Validate signing secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          missing=0
+          for variable in \
+            ANDROID_KEYSTORE_BASE64 \
+            ANDROID_KEYSTORE_PASSWORD \
+            ANDROID_KEY_ALIAS \
+            ANDROID_KEY_PASSWORD
+          do
+            if [[ -z "${!variable:-}" ]]; then
+              echo "::error::Missing GitHub Actions secret: ${variable}"
+              missing=1
+            fi
+          done
+
+          if [[ "${missing}" -ne 0 ]]; then
+            echo "::error::A stable release keystore is required. Refusing to publish a disposable debug-signed APK."
+            exit 1
+          fi
+
+      - name: Fetch pinned Xray AAR
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/bootstrap-native.sh
+
+          test -s app/libs/libv2ray.aar
+          echo "Xray AAR size:"
+          ls -lh app/libs/libv2ray.aar
+
+          echo "Native ABIs contained in the AAR:"
+          unzip -l app/libs/libv2ray.aar \
+            | awk '/jni\/[^/]+\/.*\.so$/ {print $4}' \
+            | cut -d/ -f2 \
+            | sort -u \
+            | tee native-abis.txt
+
+          for abi in armeabi-v7a arm64-v8a x86 x86_64; do
+            if ! grep -qx "${abi}" native-abis.txt; then
+              echo "::error::Pinned Xray AAR does not contain required ABI: ${abi}"
+              exit 1
+            fi
+          done
+
+      - name: Build release APK splits and app bundle
+        shell: bash
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+        run: |
+          set -euo pipefail
+
           ./gradlew \
             clean \
             testDebugUnitTest \
-            assembleDebug \
+            assembleRelease \
+            bundleRelease \
+            -PVERSION_NAME="${VERSION_NAME}" \
+            -PVERSION_CODE="${VERSION_CODE}" \
             --stacktrace \
             --no-daemon
 
       - name: Run Android lint
         continue-on-error: true
         shell: bash
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
         run: |
           set -euo pipefail
-          ./gradlew lintDebug --stacktrace --no-daemon
+          ./gradlew \
+            lintRelease \
+            -PVERSION_NAME="${VERSION_NAME}" \
+            -PVERSION_CODE="${VERSION_CODE}" \
+            --stacktrace \
+            --no-daemon
 
-      - name: Prepare debug APK
+      - name: Decode release keystore
+        id: keystore
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p dist
-          DEBUG_APK="$(find app/build/outputs/apk/debug -type f -name '*.apk' | head -n 1)"
-          if [[ -z "${DEBUG_APK}" ]]; then
-            echo "Debug APK was not found."
-            find app/build/outputs -maxdepth 5 -type f -print || true
-            exit 1
-          fi
-          cp "${DEBUG_APK}" "dist/VicoVPN-${{ steps.version.outputs.version }}-debug.apk"
-
-      - name: Build and sign production release APK
-        id: signed_release
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${ANDROID_KEYSTORE_BASE64}" ]] ||
-             [[ -z "${ANDROID_KEYSTORE_PASSWORD}" ]] ||
-             [[ -z "${ANDROID_KEY_ALIAS}" ]] ||
-             [[ -z "${ANDROID_KEY_PASSWORD}" ]]; then
-            echo "Signing secrets are incomplete."
-            echo "The installable debug APK will still be published."
-            echo "created=false" >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
 
           KEYSTORE_PATH="${RUNNER_TEMP}/vicovpn-release.jks"
-          printf '%s' "${ANDROID_KEYSTORE_BASE64}" | base64 --decode > "${KEYSTORE_PATH}"
+          printf '%s' "${ANDROID_KEYSTORE_BASE64}" \
+            | base64 --decode \
+            > "${KEYSTORE_PATH}"
 
           if [[ ! -s "${KEYSTORE_PATH}" ]]; then
-            echo "Decoded keystore file is empty."
+            echo "::error::Decoded keystore is empty."
             exit 1
           fi
 
-          ./gradlew assembleRelease --stacktrace --no-daemon
+          keytool \
+            -list \
+            -keystore "${KEYSTORE_PATH}" \
+            -storepass "${ANDROID_KEYSTORE_PASSWORD}" \
+            -alias "${ANDROID_KEY_ALIAS}" \
+            >/dev/null
 
-          UNSIGNED_APK="$(find app/build/outputs/apk/release -type f \( -name '*-unsigned.apk' -o -name '*release*.apk' \) | head -n 1)"
-          if [[ -z "${UNSIGNED_APK}" ]]; then
-            echo "Release APK was not found."
-            find app/build/outputs -maxdepth 5 -type f -print || true
-            exit 1
-          fi
+          echo "path=${KEYSTORE_PATH}" >> "${GITHUB_OUTPUT}"
 
-          BUILD_TOOLS="$(find "${ANDROID_HOME}/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
-          if [[ -z "${BUILD_TOOLS}" ]]; then
-            echo "Android build-tools were not found."
-            exit 1
-          fi
+      - name: Sign and verify every APK
+        shell: bash
+        env:
+          KEYSTORE_PATH: ${{ steps.keystore.outputs.path }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
 
+          mkdir -p dist
+
+          BUILD_TOOLS="${ANDROID_HOME}/build-tools/35.0.0"
           ZIPALIGN="${BUILD_TOOLS}/zipalign"
           APKSIGNER="${BUILD_TOOLS}/apksigner"
-          [[ -x "${ZIPALIGN}" ]] || { echo "zipalign was not found at ${ZIPALIGN}"; exit 1; }
-          [[ -x "${APKSIGNER}" ]] || { echo "apksigner was not found at ${APKSIGNER}"; exit 1; }
+          AAPT="${BUILD_TOOLS}/aapt"
 
-          ALIGNED_APK="${RUNNER_TEMP}/VicoVPN-aligned.apk"
-          SIGNED_APK="dist/VicoVPN-${{ steps.version.outputs.version }}.apk"
+          [[ -x "${ZIPALIGN}" ]] || { echo "::error::zipalign is missing."; exit 1; }
+          [[ -x "${APKSIGNER}" ]] || { echo "::error::apksigner is missing."; exit 1; }
+          [[ -x "${AAPT}" ]] || { echo "::error::aapt is missing."; exit 1; }
 
-          "${ZIPALIGN}" -p -f 4 "${UNSIGNED_APK}" "${ALIGNED_APK}"
-          "${APKSIGNER}" sign \
-            --ks "${KEYSTORE_PATH}" \
-            --ks-key-alias "${ANDROID_KEY_ALIAS}" \
-            --ks-pass "pass:${ANDROID_KEYSTORE_PASSWORD}" \
-            --key-pass "pass:${ANDROID_KEY_PASSWORD}" \
-            --out "${SIGNED_APK}" \
-            "${ALIGNED_APK}"
-          "${APKSIGNER}" verify --verbose --print-certs "${SIGNED_APK}"
-          echo "created=true" >> "${GITHUB_OUTPUT}"
+          mapfile -t SOURCE_APKS < <(
+            find app/build/outputs/apk/release \
+              -type f \
+              -name '*.apk' \
+              | sort
+          )
+
+          if [[ "${#SOURCE_APKS[@]}" -lt 5 ]]; then
+            echo "::error::Expected 5 release APKs (4 ABI splits plus universal), found ${#SOURCE_APKS[@]}."
+            printf '%s\n' "${SOURCE_APKS[@]}"
+            exit 1
+          fi
+
+          declare -A FOUND
+          SIGNING_CERT_SHA256=""
+
+          for source_apk in "${SOURCE_APKS[@]}"; do
+            base_name="$(basename "${source_apk}")"
+
+            case "${base_name}" in
+              *armeabi-v7a*) target="armeabi-v7a" ;;
+              *arm64-v8a*)   target="arm64-v8a" ;;
+              *x86_64*)      target="x86_64" ;;
+              *x86*)         target="x86" ;;
+              *universal*)   target="universal" ;;
+              *)
+                echo "Skipping unexpected APK output: ${source_apk}"
+                continue
+                ;;
+            esac
+
+            FOUND["${target}"]=1
+
+            aligned="${RUNNER_TEMP}/VicoVPN-${target}-aligned.apk"
+            signed="dist/VicoVPN-${VERSION}-${target}.apk"
+
+            "${ZIPALIGN}" \
+              -p \
+              -f \
+              4 \
+              "${source_apk}" \
+              "${aligned}"
+
+            "${APKSIGNER}" sign \
+              --ks "${KEYSTORE_PATH}" \
+              --ks-key-alias "${ANDROID_KEY_ALIAS}" \
+              --ks-pass "pass:${ANDROID_KEYSTORE_PASSWORD}" \
+              --key-pass "pass:${ANDROID_KEY_PASSWORD}" \
+              --out "${signed}" \
+              "${aligned}"
+
+            VERIFY_OUTPUT="$(
+              "${APKSIGNER}" verify \
+                --verbose \
+                --print-certs \
+                "${signed}"
+            )"
+            printf '%s\n' "${VERIFY_OUTPUT}"
+
+            CURRENT_SHA="$(
+              printf '%s\n' "${VERIFY_OUTPUT}" \
+                | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' \
+                | head -n 1
+            )"
+
+            if [[ -z "${SIGNING_CERT_SHA256}" ]]; then
+              SIGNING_CERT_SHA256="${CURRENT_SHA}"
+            elif [[ "${CURRENT_SHA}" != "${SIGNING_CERT_SHA256}" ]]; then
+              echo "::error::APK signing certificates do not match."
+              exit 1
+            fi
+
+            PACKAGE_NAME="$(
+              "${AAPT}" dump badging "${signed}" \
+                | sed -n "s/^package: name='\([^']*\)'.*/\1/p" \
+                | head -n 1
+            )"
+
+            if [[ "${PACKAGE_NAME}" != "com.vicovpn.client" ]]; then
+              echo "::error::Unexpected release application ID ${PACKAGE_NAME} in ${signed}"
+              exit 1
+            fi
+
+            if [[ "${target}" != "universal" ]]; then
+              if ! unzip -l "${signed}" \
+                    | awk '{print $4}' \
+                    | grep -q "^lib/${target}/.*\.so$"; then
+                echo "::error::${signed} does not contain native libraries for ${target}."
+                exit 1
+              fi
+            fi
+
+            ls -lh "${signed}"
+          done
+
+          for required in armeabi-v7a arm64-v8a x86 x86_64 universal; do
+            if [[ -z "${FOUND[${required}]:-}" ]]; then
+              echo "::error::Missing signed APK for ${required}."
+              exit 1
+            fi
+          done
+
+          {
+            echo "Application ID: com.vicovpn.client"
+            echo "Version: ${VERSION}"
+            echo "Signing certificate SHA-256: ${SIGNING_CERT_SHA256}"
+            echo
+            echo "APK choices:"
+            echo "- arm64-v8a: modern 64-bit Android phones"
+            echo "- armeabi-v7a: older 32-bit ARM phones"
+            echo "- x86_64: compatible 64-bit emulators/devices"
+            echo "- x86: compatible 32-bit emulators/devices"
+            echo "- universal: all supported ABIs in one APK"
+          } > dist/BUILD-INFO.txt
+
+      - name: Sign Android App Bundle
+        shell: bash
+        env:
+          KEYSTORE_PATH: ${{ steps.keystore.outputs.path }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          SOURCE_AAB="$(
+            find app/build/outputs/bundle/release \
+              -type f \
+              -name '*.aab' \
+              | head -n 1
+          )"
+
+          if [[ -z "${SOURCE_AAB}" ]]; then
+            echo "::error::Release AAB was not found."
+            exit 1
+          fi
+
+          TARGET_AAB="dist/VicoVPN-${VERSION}.aab"
+          cp "${SOURCE_AAB}" "${TARGET_AAB}"
+
+          jarsigner \
+            -keystore "${KEYSTORE_PATH}" \
+            -storepass "${ANDROID_KEYSTORE_PASSWORD}" \
+            -keypass "${ANDROID_KEY_PASSWORD}" \
+            -sigalg SHA256withRSA \
+            -digestalg SHA-256 \
+            "${TARGET_AAB}" \
+            "${ANDROID_KEY_ALIAS}"
+
+          jarsigner -verify -verbose -certs "${TARGET_AAB}" >/dev/null
+          ls -lh "${TARGET_AAB}"
 
       - name: Generate checksums
         shell: bash
         run: |
           set -euo pipefail
-          if ! compgen -G "dist/*.apk" > /dev/null; then
-            echo "No APK files exist in dist."
-            exit 1
-          fi
-          (cd dist && sha256sum *.apk > checksums-sha256.txt)
+          (
+            cd dist
+            sha256sum \
+              *.apk \
+              *.aab \
+              BUILD-INFO.txt \
+              > checksums-sha256.txt
+          )
           cat dist/checksums-sha256.txt
 
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: VicoVPN-${{ steps.version.outputs.version }}
+          name: VicoVPN-${{ steps.version.outputs.version }}-signed-multiabi
           path: |
             dist/*.apk
+            dist/*.aab
+            dist/BUILD-INFO.txt
             dist/checksums-sha256.txt
           if-no-files-found: error
           retention-days: 30
@@ -200,12 +418,26 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
           EXTRA_FLAGS=()
 
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             [[ "${MANUAL_DRAFT}" == "true" ]] && EXTRA_FLAGS+=(--draft)
             [[ "${MANUAL_PRERELEASE}" == "true" ]] && EXTRA_FLAGS+=(--prerelease)
           fi
+
+          RELEASE_NOTES="${RUNNER_TEMP}/release-notes.md"
+          cat > "${RELEASE_NOTES}" <<'EOF'
+          ## Downloads
+
+          - **Universal:** easiest option; supports every ABI packaged by this release.
+          - **arm64-v8a:** recommended for most modern Android phones.
+          - **armeabi-v7a:** for older 32-bit ARM phones.
+          - **x86 / x86_64:** mainly for compatible emulators and x86 Android devices.
+          - **AAB:** for Google Play or another store supporting Android App Bundles.
+
+          All APKs use the stable VicoVPN release signing certificate. Do not install the old GitHub debug APK as an update to these release APKs.
+          EOF
 
           if gh release view "${VERSION}" >/dev/null 2>&1; then
             gh release upload "${VERSION}" dist/* --clobber
@@ -214,7 +446,7 @@ jobs:
               "${VERSION}" \
               dist/* \
               --title "VicoVPN ${VERSION}" \
-              --generate-notes \
+              --notes-file "${RELEASE_NOTES}" \
               --target "${GITHUB_SHA}" \
               "${EXTRA_FLAGS[@]}"
           fi

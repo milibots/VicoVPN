@@ -89,3 +89,7 @@ collect_vicovpn_*.py
 .vicovpn_release_fix_backups/
 # Local Android CI patch backups
 .vicovpn_android_ci_fix_backups/
+# Local VicoVPN release signing and patch artifacts
+.release-signing/
+.vicovpn_multiabi_release_backups/
+prepare_vicovpn_multiabi_release_py38.py
