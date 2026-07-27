@@ -87,3 +87,5 @@ collect_vicovpn_*.py
 
 # Local release-fix backups
 .vicovpn_release_fix_backups/
+# Local Android CI patch backups
+.vicovpn_android_ci_fix_backups/
