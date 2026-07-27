@@ -347,9 +347,14 @@ jobs:
             fi
 
             if [[ "${target}" != "universal" ]]; then
-              if ! unzip -l "${signed}" \
-                    | awk '{print $4}' \
-                    | grep -q "^lib/${target}/.*\.so$"; then
+              APK_CONTENTS_FILE="${RUNNER_TEMP}/apk-contents-${target}.txt"
+              unzip -Z1 "${signed}" > "${APK_CONTENTS_FILE}"
+
+              echo "Native libraries in ${signed}:"
+              grep '^lib/' "${APK_CONTENTS_FILE}" || true
+
+              if ! grep -E "^lib/${target}/.*\.so$" \
+                    "${APK_CONTENTS_FILE}" >/dev/null; then
                 echo "::error::${signed} does not contain native libraries for ${target}."
                 exit 1
               fi
