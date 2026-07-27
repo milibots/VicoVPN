@@ -62,3 +62,20 @@ desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Local patch, backup, diagnostic, and IDE artifacts
+.github_setup_backups/
+.github_setup_state.json
+.vicovpn_*_state.json
+.vicovpn_*_backups/
+.vicovpn_crash_diagnostics/
+.kotlin/
+.gradle/
+.idea/
+build/
+app/build/
+local.properties
+%%CACHE_DIR%%/
+*.before_*
+*.before_button_style_fix
+vicovpn_post_onboarding_crash_*.zip

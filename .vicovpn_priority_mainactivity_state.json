@@ -1,8 +1,0 @@
-{
-  "backup": ".vicovpn_priority_mainactivity_backups\\20260726_030525",
-  "files": {
-    "app\\src\\main\\java\\com\\vicovpn\\client\\MainActivity.kt": {
-      "existed": true
-    }
-  }
-}
