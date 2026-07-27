@@ -93,3 +93,17 @@ collect_vicovpn_*.py
 .release-signing/
 .vicovpn_multiabi_release_backups/
 prepare_vicovpn_multiabi_release_py38.py
+# Local notification/CI patch artifacts
+.vicovpn_notification_permission_fix_backups/
+fix_vicovpn_notifications_ci_py38.py
+# Local final release helper artifacts
+.vicovpn_finalize_release_backups/
+finalize_vicovpn_notification_release_py38.py
+# Local notification import patch artifacts
+.vicovpn_notification_import_backups/
+fix_vicovpn_notification_import_release_py38.py
+# Local all-remaining-lint patch artifacts
+.vicovpn_all_remaining_lint_backups/
+fix.py
+# Local final tint-fix artifacts
+.vicovpn_final_tint_fix_backups/

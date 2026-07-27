@@ -25,7 +25,7 @@
             android:contentDescription="@string/ob7_back"
             android:padding="12dp"
             android:src="@drawable/ic_onboarding_back"
-            android:tint="@color/vico_premium_white"
+            app:tint="@color/vico_premium_white"
             android:visibility="invisible" />
 
         <com.google.android.material.progressindicator.LinearProgressIndicator

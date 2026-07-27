@@ -1,4 +1,7 @@
 package com.vicovpn.client.vpn
+import android.app.Notification
+import androidx.core.content.ContextCompat
+import android.Manifest
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -939,9 +942,7 @@ class VicoVpnService : VpnService() {
                 SystemClock.elapsedRealtime()
             lastNotificationUpdateAt = 0L
 
-            getSystemService(
-                NotificationManager::class.java
-            ).notify(
+            notifySafely(
                 NOTIFICATION_ID,
                 connectedNotification(
                     uploadPerSecond = 0L,
@@ -1630,15 +1631,68 @@ class VicoVpnService : VpnService() {
 
         lastNotificationUpdateAt = now
 
-        getSystemService(
-            NotificationManager::class.java
-        ).notify(
+        notifySafely(
             NOTIFICATION_ID,
             connectedNotification(
                 uploadPerSecond,
                 downloadPerSecond
             )
         )
+    }
+
+    private fun canPostNotifications(): Boolean {
+        if (
+            Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return false
+        }
+
+        return NotificationManagerCompat
+            .from(this)
+            .areNotificationsEnabled()
+    }
+
+    /**
+     * Lint cannot infer the permission guarantee through this custom helper,
+     * so MissingPermission is suppressed only after an explicit runtime
+     * permission check and SecurityException handling.
+     */
+    @SuppressLint("MissingPermission")
+    private fun notifySafely(
+        notificationId: Int,
+        notification: Notification
+    ): Boolean {
+        if (!canPostNotifications()) {
+            DiagnosticsLog.add(
+                "NOTIFICATION_PERMISSION",
+                "Skipped notification id=$notificationId; permission disabled"
+            )
+            return false
+        }
+
+        return try {
+            NotificationManagerCompat
+                .from(this)
+                .notify(
+                    notificationId,
+                    notification
+                )
+            true
+        } catch (
+            securityException: SecurityException
+        ) {
+            DiagnosticsLog.add(
+                "NOTIFICATION_PERMISSION",
+                securityException.message
+                    ?: securityException.javaClass.name
+            )
+            false
+        }
     }
 
     private fun showConnectionSuccessAlert() {
@@ -1726,14 +1780,10 @@ class VicoVpnService : VpnService() {
                 )
                 .build()
 
-        runCatching {
-            NotificationManagerCompat
-                .from(this)
-                .notify(
-                    CONNECTION_ALERT_NOTIFICATION_ID,
-                    alert
-                )
-        }
+        notifySafely(
+            CONNECTION_ALERT_NOTIFICATION_ID,
+            alert
+        )
     }
 
     private fun connectedNotification(
