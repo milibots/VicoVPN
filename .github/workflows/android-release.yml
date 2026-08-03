@@ -101,7 +101,7 @@ jobs:
             "platform-tools"
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
+        uses: gradle/actions/setup-gradle@v6.2.0
 
       - name: Make scripts executable
         shell: bash
