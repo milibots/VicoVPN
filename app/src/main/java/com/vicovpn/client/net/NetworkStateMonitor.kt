@@ -47,24 +47,13 @@ class NetworkStateMonitor(
                 capabilities:
                     NetworkCapabilities
             ) {
-                emit(
-                    fromCapabilities(
-                        capabilities
-                    )
-                )
+                emit(readCurrentState())
             }
 
             override fun onLost(
                 network: Network
             ) {
-                emit(
-                    NetworkConnectionState(
-                        hasInternet = false,
-                        isValidated = false,
-                        transport =
-                            NetworkTransport.NONE
-                    )
-                )
+                emit(readCurrentState())
             }
 
             override fun onUnavailable() {
@@ -141,31 +130,43 @@ class NetworkStateMonitor(
 
     fun readCurrentState():
         NetworkConnectionState {
-        val network =
+        /*
+         * Once a VPN is established it becomes Android's default network.
+         * That virtual network is commonly not marked VALIDATED while Xray
+         * is still starting, even though the underlying Wi-Fi/mobile network
+         * is usable. Prefer a physical network so the UI never calls the
+         * device offline merely because its own VPN is connecting.
+         */
+        val physical =
             connectivityManager
-                .activeNetwork
-                ?: return NetworkConnectionState(
-                    hasInternet = false,
-                    isValidated = false,
-                    transport =
-                        NetworkTransport.NONE
-                )
+                .allNetworks
+                .mapNotNull { network ->
+                    connectivityManager
+                        .getNetworkCapabilities(network)
+                }
+                .firstOrNull { capabilities ->
+                    capabilities.hasCapability(
+                        NetworkCapabilities.NET_CAPABILITY_INTERNET
+                    ) &&
+                        capabilities.hasCapability(
+                            NetworkCapabilities.NET_CAPABILITY_NOT_VPN
+                        )
+                }
 
-        val capabilities =
-            connectivityManager
-                .getNetworkCapabilities(
-                    network
-                )
-                ?: return NetworkConnectionState(
-                    hasInternet = false,
-                    isValidated = false,
-                    transport =
-                        NetworkTransport.NONE
-                )
+        if (physical != null) {
+            return fromCapabilities(physical)
+        }
 
-        return fromCapabilities(
-            capabilities
-        )
+        val activeCapabilities =
+            connectivityManager.activeNetwork
+                ?.let(connectivityManager::getNetworkCapabilities)
+
+        return activeCapabilities?.let(::fromCapabilities)
+            ?: NetworkConnectionState(
+                hasInternet = false,
+                isValidated = false,
+                transport = NetworkTransport.NONE
+            )
     }
 
     private fun fromCapabilities(

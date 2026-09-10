@@ -35,7 +35,9 @@ object ProxyUrlTester {
     private val endpoints = listOf(
         "https://www.gstatic.com/generate_204",
         "https://connectivitycheck.gstatic.com/generate_204",
-        "https://cp.cloudflare.com/generate_204"
+        "https://cp.cloudflare.com/generate_204",
+        "https://www.apple.com/library/test/success.html",
+        "https://www.msftconnecttest.com/connecttest.txt"
     )
 
     fun testThroughSocks(

@@ -29,8 +29,10 @@ class XrayNativeBridge(
             Semaphore(6, true)
     }
 
+    @Volatile
     private var controller: Any? = null
 
+    @Synchronized
     fun initialize(): Result<String> =
         runCatching {
             val appContext =
@@ -64,27 +66,7 @@ class XrayNativeBridge(
                     "libv2ray.Libv2ray"
                 )
 
-            val callbackType =
-                Class.forName(
-                    "libv2ray.CoreCallbackHandler"
-                )
-
-            val callback =
-                Proxy.newProxyInstance(
-                    callbackType.classLoader,
-                    arrayOf(callbackType),
-                    CallbackHandler()
-                )
-
-            controller =
-                lib.methods.first {
-                    it.name ==
-                        "newCoreController" &&
-                        it.parameterCount == 1
-                }.invoke(
-                    null,
-                    callback
-                )
+            controller = createController(lib)
 
             val version =
                 runCatching {
@@ -103,6 +85,29 @@ class XrayNativeBridge(
 
             version
         }
+
+    private fun createController(lib: Class<*>): Any {
+        val callbackType =
+            Class.forName(
+                "libv2ray.CoreCallbackHandler"
+            )
+
+        val callback =
+            Proxy.newProxyInstance(
+                callbackType.classLoader,
+                arrayOf(callbackType),
+                CallbackHandler()
+            )
+
+        return requireNotNull(
+            lib.methods.first {
+                it.name == "newCoreController" &&
+                    it.parameterCount == 1
+            }.invoke(null, callback)
+        ) {
+            "Xray native core did not create a controller"
+        }
+    }
 
     /**
      * Uses the native core's standalone outbound-delay API.
@@ -200,6 +205,7 @@ class XrayNativeBridge(
         )
     }
 
+    @Synchronized
     fun start(
         config: String,
         tunFd: Int
@@ -235,6 +241,7 @@ class XrayNativeBridge(
             )
         }
 
+    @Synchronized
     fun stop() {
         val currentController =
             controller ?: return
