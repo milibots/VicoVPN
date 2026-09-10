@@ -17,6 +17,7 @@ import android.content.pm.PackageManager
 import android.net.VpnService
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -78,6 +79,8 @@ import com.vicovpn.client.server.ServerOrigin
 import com.vicovpn.client.split.SplitTunnelingActivity
 import com.vicovpn.client.ui.AppTypography
 import com.vicovpn.client.ui.ConnectionOrbView
+import com.vicovpn.client.update.AppUpdate
+import com.vicovpn.client.update.GitHubUpdateChecker
 import com.vicovpn.client.util.BatteryOptimizationHelper
 import com.vicovpn.client.util.DiagnosticsLog
 import com.vicovpn.client.vpn.VicoVpnService
@@ -104,6 +107,10 @@ class MainActivity : AppCompatActivity() {
             "first_auto_connect_done"
         private const val KEY_ONBOARDING_COMPLETE =
             "onboarding_complete"
+        private const val KEY_UPDATE_LAST_CHECK = "update_last_check"
+        private const val KEY_UPDATE_DISMISSED_VERSION =
+            "update_dismissed_version"
+        private const val UPDATE_CHECK_INTERVAL_MS = 6L * 60L * 60L * 1_000L
         private const val THEME_SYSTEM = "system"
         private const val THEME_LIGHT = "light"
         private const val THEME_DARK = "dark"
@@ -133,6 +140,8 @@ class MainActivity : AppCompatActivity() {
     private var logsExpanded = false
     private var fullDiagnosticsText = ""
     private val subscriptionExecutor = Executors.newSingleThreadExecutor()
+    private val updateExecutor = Executors.newSingleThreadExecutor()
+    private val updateCheckRunning = java.util.concurrent.atomic.AtomicBoolean(false)
     private var subscriptionImporter: SubscriptionImporter? = null
 
     private var snapshot = VpnSnapshot()
@@ -412,11 +421,16 @@ class MainActivity : AppCompatActivity() {
             NetworkStateMonitor(this) {
                     state ->
                 runOnUiThread {
+                    val internetBecameAvailable =
+                        !hasUsableInternet && state.hasInternet
                     hasUsableInternet =
                         state.hasInternet
                     currentNetworkTransport =
                         state.transport
                     updateNetworkAvailabilityUi()
+                    if (internetBecameAvailable) {
+                        maybeCheckForAppUpdate()
+                    }
                 }
             }
 
@@ -453,6 +467,7 @@ class MainActivity : AppCompatActivity() {
         render(VpnStateRepository.get())
         renderConnectionPriority()
         homeBannerController.refresh()
+        maybeCheckForAppUpdate()
 
         binding.root.postDelayed(
             {
@@ -584,6 +599,7 @@ class MainActivity : AppCompatActivity() {
 
         subscriptionImporter?.cancel()
         subscriptionExecutor.shutdownNow()
+        updateExecutor.shutdownNow()
         uiHandler.removeCallbacksAndMessages(
             null
         )
@@ -718,6 +734,11 @@ class MainActivity : AppCompatActivity() {
                         topInsets.top +
                             20.dp
                 )
+
+            binding.appUpdateBanner
+                .updateLayoutParams<FrameLayout.LayoutParams> {
+                    topMargin = topInsets.top + 12.dp
+                }
 
             updateBottomSafeArea(
                 bottomInsets.bottom
@@ -4758,6 +4779,144 @@ class MainActivity : AppCompatActivity() {
             repairMojibake(message),
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun maybeCheckForAppUpdate() {
+        if (
+            !hasUsableInternet ||
+            updateExecutor.isShutdown ||
+            !updateCheckRunning.compareAndSet(false, true)
+        ) {
+            return
+        }
+
+        val preferences =
+            getSharedPreferences(
+                SETTINGS_PREFERENCES,
+                MODE_PRIVATE
+            )
+
+        val now = System.currentTimeMillis()
+        val lastCheck = preferences.getLong(KEY_UPDATE_LAST_CHECK, 0L)
+
+        if (now - lastCheck in 0 until UPDATE_CHECK_INTERVAL_MS) {
+            updateCheckRunning.set(false)
+            return
+        }
+
+        updateExecutor.execute {
+            GitHubUpdateChecker
+                .check(BuildConfig.VERSION_NAME)
+                .onSuccess { update ->
+                    preferences.edit()
+                        .putLong(KEY_UPDATE_LAST_CHECK, System.currentTimeMillis())
+                        .apply()
+
+                    if (update != null) {
+                        runOnUiThread {
+                            if (!isFinishing && !isDestroyed) {
+                                showAppUpdate(update)
+                            }
+                        }
+                    }
+                }
+                .onFailure { error ->
+                    DiagnosticsLog.add(
+                        "UPDATE_CHECK",
+                        error.message ?: error.javaClass.simpleName
+                    )
+                }
+
+            updateCheckRunning.set(false)
+        }
+    }
+
+    private fun showAppUpdate(update: AppUpdate) {
+        val preferences =
+            getSharedPreferences(
+                SETTINGS_PREFERENCES,
+                MODE_PRIVATE
+            )
+
+        if (
+            preferences.getString(KEY_UPDATE_DISMISSED_VERSION, "") ==
+            update.version
+        ) {
+            return
+        }
+
+        binding.appUpdateTitle.text = getString(R.string.update_available)
+        binding.appUpdateMessage.text =
+            getString(R.string.update_available_message, update.version)
+
+        val openUpdate = View.OnClickListener {
+            runCatching {
+                startActivity(
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        updateDestination(update)
+                    )
+                )
+            }.onFailure {
+                toast(getString(R.string.update_open_failed))
+            }
+        }
+
+        binding.appUpdateBanner.setOnClickListener(openUpdate)
+        binding.appUpdateAction.setOnClickListener(openUpdate)
+        binding.appUpdateDismiss.setOnClickListener {
+            preferences.edit()
+                .putString(KEY_UPDATE_DISMISSED_VERSION, update.version)
+                .apply()
+            hideAppUpdate()
+        }
+
+        binding.appUpdateBanner.apply {
+            animate().cancel()
+            visibility = View.VISIBLE
+            alpha = 0f
+            translationY = -48.dp.toFloat()
+            animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(420L)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .start()
+            announceForAccessibility(
+                getString(R.string.update_available_message, update.version)
+            )
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun updateDestination(update: AppUpdate): Uri {
+        val installer =
+            runCatching {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    packageManager
+                        .getInstallSourceInfo(packageName)
+                        .installingPackageName
+                } else {
+                    packageManager.getInstallerPackageName(packageName)
+                }
+            }.getOrNull()
+
+        return if (installer == "com.android.vending") {
+            Uri.parse("market://details?id=$packageName")
+        } else {
+            Uri.parse(update.downloadUrl)
+        }
+    }
+
+    private fun hideAppUpdate() {
+        binding.appUpdateBanner.animate()
+            .alpha(0f)
+            .translationY(-32.dp.toFloat())
+            .setDuration(220L)
+            .withEndAction {
+                binding.appUpdateBanner.visibility = View.GONE
+            }
+            .start()
     }
 
     private val Int.dp: Int

@@ -361,4 +361,10 @@
     <string name="ob7_free_service_yes">Use free + premium</string>
     <string name="ob7_free_service_no">Premium only</string>
     <string name="ob7_free_service_group_description">Choose whether free services should be enabled during setup</string>
+    <string name="update_available">Update available</string>
+    <string name="update_available_message">VicoVPN %1$s is ready on GitHub.</string>
+    <string name="update_now">Update now</string>
+    <string name="update_dismiss">Dismiss update</string>
+    <string name="update_close_symbol" translatable="false">×</string>
+    <string name="update_open_failed">Could not open the update page.</string>
 </resources>

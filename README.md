@@ -4,6 +4,8 @@
 [![Android CI](https://github.com/milibots/VicoVPN/actions/workflows/android-ci.yml/badge.svg)](https://github.com/milibots/VicoVPN/actions/workflows/android-ci.yml)
 [![Android Release](https://github.com/milibots/VicoVPN/actions/workflows/android-release.yml/badge.svg)](https://github.com/milibots/VicoVPN/actions/workflows/android-release.yml)
 [![Latest release](https://img.shields.io/github/v/release/milibots/VicoVPN?display_name=tag&sort=semver)](https://github.com/milibots/VicoVPN/releases/latest)
+[![GitHub downloads](https://img.shields.io/github/downloads/milibots/VicoVPN/total?label=GitHub%20downloads&logo=github)](https://github.com/milibots/VicoVPN/releases)
+[![Latest release downloads](https://img.shields.io/github/downloads/milibots/VicoVPN/latest/total?label=latest%20release%20downloads)](https://github.com/milibots/VicoVPN/releases/latest)
 <!-- github-automation:badges:end -->
 
 

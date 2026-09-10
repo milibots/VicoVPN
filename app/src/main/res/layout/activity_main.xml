@@ -467,7 +467,92 @@
 
     </FrameLayout>
 
-    
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/appUpdateBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:elevation="12dp"
+        android:focusable="true"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/vico_premium_card"
+        app:cardCornerRadius="24dp"
+        app:strokeColor="@color/vico_premium_orange"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="12dp">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_download"
+                app:tint="@color/vico_premium_orange" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/appUpdateTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/update_available"
+                    android:textColor="@color/vico_premium_white"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/appUpdateMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/vico_premium_muted"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/appUpdateAction"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:minWidth="0dp"
+                android:text="@string/update_now"
+                android:textAllCaps="false"
+                android:textColor="@color/vico_premium_orange" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/appUpdateDismiss"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/update_dismiss"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:minWidth="0dp"
+                android:text="@string/update_close_symbol"
+                android:textColor="@color/vico_premium_muted"
+                android:textSize="22sp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 
 <com.google.android.material.card.MaterialCardView android:id="@+id/discoveryMiniCard" android:layout_width="wrap_content" android:layout_height="52dp" android:layout_gravity="bottom|center_horizontal" android:layout_marginTop="0dp" android:layout_marginEnd="24dp" android:clickable="true" android:elevation="0dp" android:focusable="true" android:foreground="?attr/selectableItemBackground" android:visibility="gone" app:cardBackgroundColor="@color/vico_premium_nav" app:cardCornerRadius="26dp" app:strokeColor="@color/vico_premium_nav_outline" app:strokeWidth="1dp" android:layout_marginStart="24dp" android:layout_marginBottom="96dp">
 

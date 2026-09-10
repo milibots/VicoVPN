@@ -361,4 +361,9 @@
     <string name="ob7_free_service_yes">رایگان + ویژه</string>
     <string name="ob7_free_service_no">فقط ویژه</string>
     <string name="ob7_free_service_group_description">انتخاب کنید سرویس‌های رایگان در هنگام راه‌اندازی فعال شوند یا نه</string>
+    <string name="update_available">نسخه جدید آماده است</string>
+    <string name="update_available_message">نسخه %1$s ویکو وی‌پی‌ان در گیت‌هاب آماده است.</string>
+    <string name="update_now">به‌روزرسانی</string>
+    <string name="update_dismiss">بستن پیام به‌روزرسانی</string>
+    <string name="update_open_failed">صفحه به‌روزرسانی باز نشد.</string>
 </resources>
