@@ -26,18 +26,51 @@
         android:textColor="@color/vico_premium_white"
         android:textSize="24sp" />
 
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/subscriptionProgressBar"
-        android:layout_width="112dp"
-        android:layout_height="112dp"
+    <TextView
+        android:id="@+id/subscriptionProgressPhase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="28dp"
-        android:indeterminate="true"
-        app:indicatorColor="@color/vico_premium_orange"
-        app:indicatorDirectionCircular="clockwise"
-        app:indicatorSize="100dp"
-        app:trackColor="@color/vico_premium_outline"
-        app:trackThickness="7dp" />
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_premium_setting_icon"
+        android:fontFamily="sans-serif-medium"
+        android:paddingStart="14dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="7dp"
+        android:text="@string/subscription_phase_preparing"
+        android:textColor="@color/vico_premium_orange"
+        android:textSize="12sp" />
+
+    <FrameLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/subscriptionProgressBar"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            app:indicatorColor="@color/vico_premium_orange"
+            app:indicatorDirectionCircular="clockwise"
+            app:indicatorSize="104dp"
+            app:trackColor="@color/vico_premium_outline"
+            app:trackThickness="7dp" />
+
+        <TextView
+            android:id="@+id/subscriptionProgressValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:text="—"
+            android:textColor="@color/vico_premium_white"
+            android:textDirection="ltr"
+            android:textSize="18sp" />
+    </FrameLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/subscriptionCenterActionButton"
@@ -45,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="6dp"
         android:minHeight="0dp"
         android:minWidth="104dp"
         android:text="@string/stop"

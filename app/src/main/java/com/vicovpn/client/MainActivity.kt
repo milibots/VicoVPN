@@ -2,7 +2,6 @@ package com.vicovpn.client
 
 import android.Manifest
 import android.animation.ValueAnimator
-import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -28,7 +27,6 @@ import android.text.format.Formatter
 import android.view.Gravity
 import android.view.HapticFeedbackConstants
 import android.view.View
-import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -71,7 +69,6 @@ import com.vicovpn.client.model.ProxyProfile
 import com.vicovpn.client.net.NetworkConnectionState
 import com.vicovpn.client.net.NetworkStateMonitor
 import com.vicovpn.client.net.NetworkTransport
-import com.vicovpn.client.onboarding.OnboardingActivity
 import com.vicovpn.client.parser.ShareLinkParser
 import com.vicovpn.client.server.SavedServer
 import com.vicovpn.client.server.ServerStore
@@ -142,6 +139,7 @@ class MainActivity : AppCompatActivity() {
     private val subscriptionExecutor = Executors.newSingleThreadExecutor()
     private val updateExecutor = Executors.newSingleThreadExecutor()
     private val updateCheckRunning = java.util.concurrent.atomic.AtomicBoolean(false)
+    private var startupAnimator: ValueAnimator? = null
     private var subscriptionImporter: SubscriptionImporter? = null
 
     private var snapshot = VpnSnapshot()
@@ -151,6 +149,8 @@ class MainActivity : AppCompatActivity() {
     private var freeTestStatus: TextView? = null
     private var freeTestDetail: TextView? = null
     private var freeTestProgressBar: ProgressBar? = null
+    private var freeTestPhase: TextView? = null
+    private var freeTestProgressValue: TextView? = null
     private var freeTestActionButton: MaterialButton? = null
     private var freeTestCenterButton: MaterialButton? = null
     private var discoveryUiSuppressed = false
@@ -163,9 +163,9 @@ class MainActivity : AppCompatActivity() {
     private var discoveryLastTotal = 0
     private var discoveryLastFailed = 0
     private var discoveryLastMessage = ""
-    private var onboardingDialog: Dialog? = null
-    private var onboardingPage = 0
-    private var pendingFirstRunConnection = false
+    private var discoveryStage = ""
+    private var discoveryBestLatencyMs = -1L
+    private var discoveryTcpReachable = 0
     private lateinit var networkStateMonitor:
         NetworkStateMonitor
 
@@ -262,6 +262,11 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (intent == null) return
 
+                val stage =
+                    intent.getStringExtra(
+                        VicoVpnService.EXTRA_FREE_STAGE
+                    ).orEmpty()
+
                 val completed =
                     intent.getIntExtra(
                         VicoVpnService.EXTRA_FREE_COMPLETED,
@@ -303,13 +308,23 @@ class MainActivity : AppCompatActivity() {
                         false
                     )
 
-                lastDiscoveryWorking =
-                    maxOf(
-                        lastDiscoveryWorking,
-                        working
+                val bestLatencyMs =
+                    intent.getLongExtra(
+                        VicoVpnService.EXTRA_FREE_BEST_LATENCY,
+                        -1L
                     )
 
-                if (working > 0) {
+                if (stage == "tcp") {
+                    discoveryTcpReachable = working
+                } else {
+                    lastDiscoveryWorking =
+                        maxOf(
+                            lastDiscoveryWorking,
+                            working
+                        )
+                }
+
+                if (working > 0 && stage != "tcp") {
                     refreshServerUi()
 
                     if (
@@ -320,12 +335,6 @@ class MainActivity : AppCompatActivity() {
 
                         serverStore.activateBestFreeServer()
                         refreshServerUi()
-
-                        if (!isOnboardingComplete()) {
-                            pendingFirstRunConnection = true
-                            updateOnboardingDiscoveryState(true)
-                            return
-                        }
 
                         connectAfterFreeUpdate = false
                         freeTestDialog?.dismiss()
@@ -364,13 +373,15 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 updateFreeTestProgressUi(
+                    stage = stage,
                     completed = completed,
                     total = total,
                     working = working,
                     failed = failed,
                     message = message,
                     finished = finished,
-                    success = success
+                    success = success,
+                    bestLatencyMs = bestLatencyMs
                 )
             }
         }
@@ -380,16 +391,12 @@ class MainActivity : AppCompatActivity() {
         restoreSavedLanguage()
         super.onCreate(savedInstanceState)
 
-        if (!isOnboardingComplete()) {
-            startActivity(
-                Intent(
-                    this,
-                    OnboardingActivity::class.java
-                )
-            )
-            finish()
-            return
-        }
+        getSharedPreferences(
+            SETTINGS_PREFERENCES,
+            MODE_PRIVATE
+        ).edit()
+            .putBoolean(KEY_ONBOARDING_COMPLETE, true)
+            .apply()
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
@@ -401,6 +408,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         AppTypography.apply(this, binding.root)
+        showStartupExperience()
 
         serverStore = ServerStore(this)
         subscriptionSettings = SubscriptionSettings(this)
@@ -497,19 +505,7 @@ class MainActivity : AppCompatActivity() {
             900L
         )
 
-        val launchedFromOnboarding =
-            intent.getBooleanExtra(
-                OnboardingActivity.EXTRA_FROM_ONBOARDING,
-                false
-            )
-
-        if (launchedFromOnboarding) {
-            discoveryUiSuppressed = true
-            connectAfterFreeUpdate = false
-            smartConnectTriggered = false
-        } else {
-            maybeAutoUpdateFreeServers()
-        }
+        maybeAutoUpdateFreeServers()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -600,6 +596,7 @@ class MainActivity : AppCompatActivity() {
         subscriptionImporter?.cancel()
         subscriptionExecutor.shutdownNow()
         updateExecutor.shutdownNow()
+        startupAnimator?.cancel()
         uiHandler.removeCallbacksAndMessages(
             null
         )
@@ -1597,6 +1594,9 @@ class MainActivity : AppCompatActivity() {
         discoveryLastCompleted = 0
         discoveryLastTotal = 0
         discoveryLastFailed = 0
+        discoveryStage = "preparing"
+        discoveryBestLatencyMs = -1L
+        discoveryTcpReachable = 0
         discoveryLastMessage =
             getString(
                 R.string.subscription_looking_simple
@@ -1771,6 +1771,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.subscriptionProgressBar
             )
 
+        freeTestPhase =
+            view.findViewById(
+                R.id.subscriptionProgressPhase
+            )
+
+        freeTestProgressValue =
+            view.findViewById(
+                R.id.subscriptionProgressValue
+            )
+
         freeTestCenterButton =
             view.findViewById(
                 R.id.subscriptionCenterActionButton
@@ -1808,6 +1818,8 @@ class MainActivity : AppCompatActivity() {
         freeTestStatus = null
         freeTestDetail = null
         freeTestProgressBar = null
+        freeTestPhase = null
+        freeTestProgressValue = null
         freeTestActionButton = null
         freeTestCenterButton = null
     }
@@ -1856,6 +1868,20 @@ class MainActivity : AppCompatActivity() {
 
         freeTestDetail?.text =
             when {
+                discoveryStage == "tcp" ->
+                    getString(
+                        R.string.subscription_tcp_progress_detail,
+                        discoveryTcpReachable
+                    )
+
+                discoveryStage == "real" &&
+                    discoveryBestLatencyMs > 0L ->
+                    getString(
+                        R.string.subscription_real_progress_detail,
+                        lastDiscoveryWorking,
+                        discoveryBestLatencyMs
+                    )
+
                 lastDiscoveryWorking > 0 &&
                     !discoveryTaskFinished ->
                     getString(
@@ -1873,20 +1899,41 @@ class MainActivity : AppCompatActivity() {
                     )
             }
 
-        freeTestProgressBar?.apply {
-            isIndeterminate =
-                !discoveryTaskFinished
+        freeTestPhase?.text =
+            when (discoveryStage) {
+                "tcp" -> getString(R.string.subscription_phase_tcp)
+                "real" -> getString(R.string.subscription_phase_real)
+                "complete" -> getString(R.string.subscription_phase_complete)
+                else -> getString(R.string.subscription_phase_preparing)
+            }
 
-            if (discoveryTaskFinished) {
-                max = 100
+        freeTestProgressValue?.text =
+            if (discoveryLastTotal > 0) {
+                getString(
+                    R.string.subscription_progress_fraction,
+                    discoveryLastCompleted.coerceAtMost(discoveryLastTotal),
+                    discoveryLastTotal
+                )
+            } else {
+                "—"
+            }
+
+        freeTestProgressBar?.apply {
+            max = 100
+            isIndeterminate = discoveryLastTotal <= 0
+
+            if (!isIndeterminate) {
                 progress =
-                    if (
-                        discoveryTaskSuccess ||
-                        lastDiscoveryWorking > 0
-                    ) {
-                        100
+                    if (discoveryTaskFinished) {
+                        if (
+                            discoveryTaskSuccess ||
+                            lastDiscoveryWorking > 0
+                        ) 100 else 0
                     } else {
-                        0
+                        (
+                            discoveryLastCompleted * 100L /
+                                discoveryLastTotal.coerceAtLeast(1)
+                            ).toInt()
                     }
             }
         }
@@ -2036,30 +2083,17 @@ class MainActivity : AppCompatActivity() {
 
         if (activeImporter != null) {
             activeImporter.cancel()
-
-            freeTestCenterButton
-                ?.isEnabled = false
-
-            freeTestActionButton
-                ?.isEnabled = false
-
-            freeTestStatus?.text =
-                getString(
-                    R.string.subscription_cancelling
+        } else {
+            startService(
+                Intent(
+                    this,
+                    VicoVpnService::class.java
+                ).setAction(
+                    VicoVpnService
+                        .ACTION_CANCEL_FREE_TEST
                 )
-
-            return
-        }
-
-        startService(
-            Intent(
-                this,
-                VicoVpnService::class.java
-            ).setAction(
-                VicoVpnService
-                    .ACTION_CANCEL_FREE_TEST
             )
-        )
+        }
 
         freeTestCenterButton
             ?.isEnabled = false
@@ -2069,7 +2103,7 @@ class MainActivity : AppCompatActivity() {
 
         freeTestStatus?.text =
             getString(
-                R.string.subscription_finishing_current_batch
+                R.string.subscription_cancelling
             )
     }
 
@@ -2103,18 +2137,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateFreeTestProgressUi(
+        stage: String,
         completed: Int,
         total: Int,
         working: Int,
         failed: Int,
         message: String,
         finished: Boolean,
-        success: Boolean
+        success: Boolean,
+        bestLatencyMs: Long
     ) {
+        discoveryStage = stage
         discoveryLastCompleted = completed
         discoveryLastTotal = total
         discoveryLastFailed = failed
         discoveryLastMessage = message
+        if (bestLatencyMs > 0L) {
+            discoveryBestLatencyMs =
+                if (discoveryBestLatencyMs > 0L) {
+                    minOf(discoveryBestLatencyMs, bestLatencyMs)
+                } else {
+                    bestLatencyMs
+                }
+        }
         discoveryTaskFinished = finished
         discoveryTaskSuccess = success
         lastDiscoveryWorking =
@@ -3949,179 +3994,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isOnboardingComplete(): Boolean {
-        return getSharedPreferences(
-            SETTINGS_PREFERENCES,
-            MODE_PRIVATE
-        ).getBoolean(
-            KEY_ONBOARDING_COMPLETE,
-            false
-        )
-    }
-
-    private fun startFirstRunDiscoverySilently() {
-        connectAfterFreeUpdate = true
-        smartConnectTriggered = false
-        discoveryUiSuppressed = true
-
-        val active = serverStore.getBestFreeServer()
-        if (active != null) {
-            serverStore.setActiveServer(active.id)
-            pendingFirstRunConnection = true
-            return
-        }
-
-        binding.root.postDelayed(
-            {
-                if (!isFinishing && hasUsableInternet && subscriptionImporter == null) {
-                    loadFreeSubscriptions(showUi = false)
-                }
-            },
-            300L
-        )
-    }
-
-    private fun showOnboarding() {
-        if (onboardingDialog?.isShowing == true) return
-
-        onboardingPage = 0
-        val dialog = Dialog(this, android.R.style.Theme_DeviceDefault_NoActionBar)
-        val view = layoutInflater.inflate(R.layout.dialog_onboarding, null)
-        AppTypography.apply(this, view)
-        dialog.setContentView(view)
-        dialog.setCancelable(false)
-
-        dialog.window?.apply {
-            setLayout(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT
-            )
-            setBackgroundDrawableResource(android.R.color.transparent)
-            statusBarColor = ContextCompat.getColor(
-                this@MainActivity,
-                R.color.vico_premium_background
-            )
-            navigationBarColor = ContextCompat.getColor(
-                this@MainActivity,
-                R.color.vico_premium_background
-            )
-        }
-
-        view.findViewById<TextView>(R.id.onboardingSkip).setOnClickListener {
-            completeOnboarding()
-        }
-        view.findViewById<MaterialButton>(R.id.onboardingNext).setOnClickListener {
-            if (onboardingPage < 4) {
-                onboardingPage++
-                renderOnboardingPage()
-            } else {
-                completeOnboarding()
-            }
-        }
-
-        onboardingDialog = dialog
-        dialog.show()
-        renderOnboardingPage()
-    }
-
-    private fun renderOnboardingPage() {
-        val dialog = onboardingDialog ?: return
-        val icons = intArrayOf(
-            R.drawable.ic_onboarding_fast,
-            R.drawable.ic_onboarding_smart,
-            R.drawable.ic_onboarding_private,
-            R.drawable.ic_onboarding_background,
-            R.drawable.ic_onboarding_ready
-        )
-        val titles = intArrayOf(
-            R.string.onboarding_1_title,
-            R.string.onboarding_2_title,
-            R.string.onboarding_3_title,
-            R.string.onboarding_4_title,
-            R.string.onboarding_5_title
-        )
-        val bodies = intArrayOf(
-            R.string.onboarding_1_body,
-            R.string.onboarding_2_body,
-            R.string.onboarding_3_body,
-            R.string.onboarding_4_body,
-            R.string.onboarding_5_body
-        )
-
-        dialog.findViewById<ImageView>(R.id.onboardingIcon)?.setImageResource(icons[onboardingPage])
-        dialog.findViewById<TextView>(R.id.onboardingTitle)?.setText(titles[onboardingPage])
-        dialog.findViewById<TextView>(R.id.onboardingBody)?.setText(bodies[onboardingPage])
-        dialog.findViewById<MaterialButton>(R.id.onboardingNext)?.setText(
-            if (onboardingPage == 4) R.string.onboarding_start else R.string.onboarding_next
-        )
-
-        val dots = dialog.findViewById<LinearLayout>(R.id.onboardingDots) ?: return
-        dots.removeAllViews()
-        repeat(5) { index ->
-            val dot = View(this).apply {
-                background = android.graphics.drawable.GradientDrawable().apply {
-                    shape = android.graphics.drawable.GradientDrawable.RECTANGLE
-                    cornerRadius = 999f
-                    setColor(
-                        ContextCompat.getColor(
-                            this@MainActivity,
-                            if (index == onboardingPage) R.color.vico_premium_orange
-                            else R.color.vico_premium_outline
-                        )
-                    )
-                }
-                layoutParams = LinearLayout.LayoutParams(
-                    if (index == onboardingPage) 22.dp else 8.dp,
-                    8.dp
-                ).apply {
-                    marginStart = 4.dp
-                    marginEnd = 4.dp
-                }
-            }
-            dots.addView(dot)
-        }
-
-        updateOnboardingDiscoveryState(
-            pendingFirstRunConnection || serverStore.getBestFreeServer() != null
-        )
-    }
-
-    private fun updateOnboardingDiscoveryState(routeReady: Boolean) {
-        onboardingDialog
-            ?.findViewById<TextView>(R.id.onboardingDiscoveryState)
-            ?.setText(
-                if (routeReady) R.string.onboarding_route_ready
-                else R.string.onboarding_finding_route_silently
-            )
-    }
-
-    private fun completeOnboarding() {
-        getSharedPreferences(
-            SETTINGS_PREFERENCES,
-            MODE_PRIVATE
-        ).edit()
-            .putBoolean(KEY_ONBOARDING_COMPLETE, true)
-            .apply()
-
-        onboardingDialog?.dismiss()
-        onboardingDialog = null
-
-        val best = serverStore.getBestFreeServer()
-        if (best != null) {
-            serverStore.setActiveServer(best.id)
-            connectAfterFreeUpdate = false
-            pendingFirstRunConnection = false
-            requestVpnStart()
-        } else {
-            connectAfterFreeUpdate = true
-            pendingFirstRunConnection = true
-            if (subscriptionImporter == null) {
-                loadFreeSubscriptions(showUi = false)
-            }
-            toast(getString(R.string.onboarding_finding_route_silently))
-        }
-    }
-
     private fun restoreSavedLanguage() {
         val preferences = getSharedPreferences(
             SETTINGS_PREFERENCES,
@@ -4779,6 +4651,55 @@ class MainActivity : AppCompatActivity() {
             repairMojibake(message),
             Toast.LENGTH_SHORT
         ).show()
+    }
+
+    private fun showStartupExperience() {
+        binding.startupOverlay.apply {
+            visibility = View.VISIBLE
+            alpha = 1f
+        }
+
+        binding.startupLogo.apply {
+            scaleX = 0.88f
+            scaleY = 0.88f
+            alpha = 0f
+            animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(420L)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .start()
+        }
+
+        startupAnimator?.cancel()
+        startupAnimator =
+            ValueAnimator.ofFloat(0.32f, 0.9f).apply {
+                duration = 620L
+                repeatMode = ValueAnimator.REVERSE
+                repeatCount = ValueAnimator.INFINITE
+                addUpdateListener {
+                    binding.startupSkeleton.alpha =
+                        it.animatedValue as Float
+                }
+                start()
+            }
+
+        binding.startupOverlay.postDelayed(
+            {
+                if (isFinishing || isDestroyed) return@postDelayed
+
+                startupAnimator?.cancel()
+                binding.startupOverlay.animate()
+                    .alpha(0f)
+                    .setDuration(320L)
+                    .withEndAction {
+                        binding.startupOverlay.visibility = View.GONE
+                    }
+                    .start()
+            },
+            950L
+        )
     }
 
     private fun maybeCheckForAppUpdate() {

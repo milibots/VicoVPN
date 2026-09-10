@@ -25,7 +25,9 @@ object HttpTextClient {
         maxBytes: Int = 8_000_000,
         userAgent: String =
             SUBSCRIPTION_USER_AGENT,
-        noCache: Boolean = true
+        noCache: Boolean = true,
+        onConnectionOpened: (HttpURLConnection) -> Unit = {},
+        onConnectionClosed: (HttpURLConnection) -> Unit = {}
     ): String {
         require(maxBytes in 1..16_000_000) {
             "Invalid maximum response size"
@@ -35,8 +37,8 @@ object HttpTextClient {
             URL(url).openConnection()
                 as HttpURLConnection
 
-        connection.connectTimeout = 12_000
-        connection.readTimeout = 25_000
+        connection.connectTimeout = 7_000
+        connection.readTimeout = 10_000
         connection.instanceFollowRedirects = true
         connection.useCaches = !noCache
 
@@ -65,6 +67,7 @@ object HttpTextClient {
         }
 
         try {
+            onConnectionOpened(connection)
             val responseCode =
                 connection.responseCode
 
@@ -119,6 +122,7 @@ object HttpTextClient {
             )
         } finally {
             connection.disconnect()
+            onConnectionClosed(connection)
         }
     }
 

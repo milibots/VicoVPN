@@ -366,4 +366,17 @@
     <string name="update_now">به‌روزرسانی</string>
     <string name="update_dismiss">بستن پیام به‌روزرسانی</string>
     <string name="update_open_failed">صفحه به‌روزرسانی باز نشد.</string>
+    <string name="subscription_tcp_prefilter">در حال بررسی سریع دسترسی سرورها…</string>
+    <string name="subscription_real_delay_test">در حال اندازه‌گیری تأخیر واقعی پراکسی…</string>
+    <string name="subscription_no_reachable_endpoints">هیچ سرور قابل دسترسی پیدا نشد.</string>
+    <string name="subscription_phase_preparing">آماده‌سازی</string>
+    <string name="subscription_phase_tcp">بررسی سریع TCP</string>
+    <string name="subscription_phase_real">تست تأخیر واقعی</string>
+    <string name="subscription_phase_complete">تکمیل شد</string>
+    <string name="subscription_progress_fraction">%1$d / %2$d</string>
+    <string name="subscription_real_progress_detail">%1$d مسیر فعال • بهترین %2$d میلی‌ثانیه</string>
+    <string name="subscription_tcp_progress_detail">%1$d سرور قابل دسترسی پیدا شد</string>
+    <string name="startup_brand">VicoVPN</string>
+    <string name="startup_byline">توسط MiliScripts</string>
+    <string name="startup_loading">در حال آماده‌سازی فضای امن…</string>
 </resources>

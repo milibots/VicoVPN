@@ -367,4 +367,17 @@
     <string name="update_dismiss">Dismiss update</string>
     <string name="update_close_symbol" translatable="false">×</string>
     <string name="update_open_failed">Could not open the update page.</string>
+    <string name="subscription_tcp_prefilter">Checking reachable endpoints…</string>
+    <string name="subscription_real_delay_test">Measuring real proxy delay…</string>
+    <string name="subscription_no_reachable_endpoints">No reachable server endpoints were found.</string>
+    <string name="subscription_phase_preparing">PREPARING</string>
+    <string name="subscription_phase_tcp">FAST TCP CHECK</string>
+    <string name="subscription_phase_real">REAL DELAY TEST</string>
+    <string name="subscription_phase_complete">COMPLETE</string>
+    <string name="subscription_progress_fraction">%1$d / %2$d</string>
+    <string name="subscription_real_progress_detail">%1$d working routes • best %2$d ms</string>
+    <string name="subscription_tcp_progress_detail">%1$d reachable endpoints found</string>
+    <string name="startup_brand">VicoVPN</string>
+    <string name="startup_byline">by MiliScripts</string>
+    <string name="startup_loading">Preparing your secure workspace…</string>
 </resources>

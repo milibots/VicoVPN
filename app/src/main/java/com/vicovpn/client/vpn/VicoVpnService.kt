@@ -34,6 +34,7 @@ import com.vicovpn.client.split.SplitTunnelSettings
 import com.vicovpn.client.subscription.DevicePerformanceProfile
 import com.vicovpn.client.subscription.FreeServerUpdateStore
 import com.vicovpn.client.subscription.FreeServerSettings
+import com.vicovpn.client.subscription.FastReachabilityTester
 import com.vicovpn.client.subscription.NativeBatchDelayTester
 import com.vicovpn.client.subscription.SubscriptionImporter
 import com.vicovpn.client.subscription.SubscriptionSettings
@@ -84,6 +85,9 @@ class VicoVpnService : VpnService() {
 
     private var discoveryTester:
         NativeBatchDelayTester? = null
+
+    private var reachabilityTester:
+        FastReachabilityTester? = null
 
     private val failedSessionProfiles =
         ConcurrentHashMap
@@ -232,6 +236,8 @@ class VicoVpnService : VpnService() {
             }
 
             ACTION_CANCEL_FREE_TEST -> {
+                reachabilityTester
+                    ?.requestStopAndKeepResults()
                 discoveryTester
                     ?.requestStopAndKeepResults()
 
@@ -275,6 +281,7 @@ class VicoVpnService : VpnService() {
     override fun onDestroy() {
         cancelFreeTest.set(true)
         discoveryTester?.cancel()
+        reachabilityTester?.cancel()
 
         stopTunnel(
             publishDisconnected = false
@@ -465,14 +472,111 @@ class VicoVpnService : VpnService() {
                     baseParallelism
                 }
 
+            val tcpCandidates =
+                candidates.take(
+                    deviceProfile
+                        .reachabilityInputLimit
+                )
+
             publishFreeProgress(
-                stage = "testing",
+                stage = "tcp",
                 completed = 0,
-                total = candidates.size,
+                total = tcpCandidates.size,
                 working = 0,
                 failed = 0,
                 message = getString(
-                    R.string.subscription_verifying_routes
+                    R.string.subscription_tcp_prefilter
+                )
+            )
+
+            val tcpTester =
+                FastReachabilityTester(
+                    workerCount =
+                        deviceProfile
+                            .reachabilityThreads,
+                    timeoutMs =
+                        deviceProfile.tcpTimeoutMs,
+                    outputLimit =
+                        deviceProfile.candidateLimit
+                )
+
+            reachabilityTester = tcpTester
+
+            val reachable =
+                tcpTester.filter(tcpCandidates) {
+                        completed,
+                        total,
+                        available ->
+                    val updateEvery =
+                        (total / 50).coerceAtLeast(1)
+
+                    if (
+                        completed == total ||
+                        completed % updateEvery == 0
+                    ) {
+                        publishFreeProgress(
+                            stage = "tcp",
+                            completed = completed,
+                            total = total,
+                            working = available,
+                            failed =
+                                (completed - available)
+                                    .coerceAtLeast(0),
+                            message = getString(
+                                R.string.subscription_tcp_prefilter
+                            )
+                        )
+                    }
+                }.getOrElse { error ->
+                    throw error
+                }
+
+            reachabilityTester = null
+
+            if (tcpTester.wasStopRequested()) {
+                val savedCount =
+                    ServerStore(this).getServers()
+                        .count {
+                            it.origin == ServerOrigin.FREE_SUBSCRIPTION
+                        }
+
+                publishFreeProgress(
+                    stage = "complete",
+                    completed = 0,
+                    total = 0,
+                    working = savedCount,
+                    failed = 0,
+                    message = getString(
+                        R.string.subscription_stopped_results_kept
+                    ),
+                    finished = true,
+                    success = savedCount > 0
+                )
+                return
+            }
+
+            require(reachable.isNotEmpty()) {
+                getString(
+                    R.string.subscription_no_reachable_endpoints
+                )
+            }
+
+            val realPingCandidates =
+                reachable.map { it.rawLink }
+
+            DiagnosticsLog.add(
+                "REAL_DELAY",
+                "TCP shortlist ${realPingCandidates.size}/${tcpCandidates.size}; fastest=${reachable.first().tcpLatencyMs}ms"
+            )
+
+            publishFreeProgress(
+                stage = "real",
+                completed = 0,
+                total = realPingCandidates.size,
+                working = 0,
+                failed = 0,
+                message = getString(
+                    R.string.subscription_real_delay_test
                 )
             )
 
@@ -490,12 +594,12 @@ class VicoVpnService : VpnService() {
 
             val result =
                 tester.test(
-                    rawLinks = candidates,
+                    rawLinks = realPingCandidates,
                     resultLimit =
                         deviceProfile.resultLimit,
                     onProgress = { progress ->
                         publishFreeProgress(
-                            stage = "testing",
+                            stage = "real",
                             completed =
                                 progress.tested,
                             total =
@@ -507,6 +611,9 @@ class VicoVpnService : VpnService() {
                                     progress.tested -
                                         progress.working
                                     ).coerceAtLeast(0),
+                            bestLatencyMs =
+                                progress.bestLatencyMs
+                                    ?: -1L,
                             message =
                                 if (
                                     progress.working > 0
@@ -516,7 +623,7 @@ class VicoVpnService : VpnService() {
                                     )
                                 } else {
                                     getString(
-                                        R.string.subscription_verifying_routes
+                                        R.string.subscription_real_delay_test
                                     )
                                 }
                         )
@@ -541,10 +648,10 @@ class VicoVpnService : VpnService() {
                     if (verified.isEmpty()) {
                         publishFreeProgress(
                             stage = "complete",
-                            completed = candidates.size,
-                            total = candidates.size,
+                            completed = realPingCandidates.size,
+                            total = realPingCandidates.size,
                             working = 0,
-                            failed = candidates.size,
+                            failed = realPingCandidates.size,
                             message = getString(
                                 R.string.subscription_no_verified_routes
                             ),
@@ -571,11 +678,11 @@ class VicoVpnService : VpnService() {
                     publishFreeProgress(
                         stage = "complete",
                         completed = verified.size,
-                        total = candidates.size,
+                        total = realPingCandidates.size,
                         working = verified.size,
                         failed =
                             (
-                                candidates.size -
+                                realPingCandidates.size -
                                     verified.size
                                 ).coerceAtLeast(0),
                         message = getString(
@@ -630,6 +737,7 @@ class VicoVpnService : VpnService() {
                 success = false
             )
         } finally {
+            reachabilityTester = null
             discoveryTester = null
             discoveryRunning.set(false)
 
@@ -678,7 +786,8 @@ class VicoVpnService : VpnService() {
         failed: Int = 0,
         message: String,
         finished: Boolean = false,
-        success: Boolean = false
+        success: Boolean = false,
+        bestLatencyMs: Long = -1L
     ) {
         sendBroadcast(
             Intent(ACTION_FREE_TEST_PROGRESS)
@@ -715,6 +824,10 @@ class VicoVpnService : VpnService() {
                     putExtra(
                         EXTRA_FREE_SUCCESS,
                         success
+                    )
+                    putExtra(
+                        EXTRA_FREE_BEST_LATENCY,
+                        bestLatencyMs
                     )
                 }
         )
@@ -2134,6 +2247,9 @@ class VicoVpnService : VpnService() {
 
         const val EXTRA_FREE_SUCCESS =
             "free_success"
+
+        const val EXTRA_FREE_BEST_LATENCY =
+            "free_best_latency"
 
         private const val CHANNEL_ID =
             "vicovpn_connection"

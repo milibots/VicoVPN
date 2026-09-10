@@ -72,14 +72,6 @@
 
 
         <activity
-            android:name=".onboarding.OnboardingActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.VicoVPN"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
             android:name=".profile.VipProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait"

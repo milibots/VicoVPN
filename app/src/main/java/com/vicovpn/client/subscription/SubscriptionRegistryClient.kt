@@ -2,12 +2,15 @@ package com.vicovpn.client.subscription
 
 import org.json.JSONObject
 import java.net.URI
+import java.net.HttpURLConnection
 
 object SubscriptionRegistryClient {
 
     fun fetch(
         registryUrl: String,
-        maxSourceCount: Int
+        maxSourceCount: Int,
+        onConnectionOpened: (HttpURLConnection) -> Unit = {},
+        onConnectionClosed: (HttpURLConnection) -> Unit = {}
     ): SubscriptionRegistry {
         val body =
             HttpTextClient.get(
@@ -18,7 +21,9 @@ object SubscriptionRegistryClient {
                 userAgent =
                     HttpTextClient
                         .REGISTRY_USER_AGENT,
-                noCache = true
+                noCache = true,
+                onConnectionOpened = onConnectionOpened,
+                onConnectionClosed = onConnectionClosed
             )
 
         val json =

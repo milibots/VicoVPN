@@ -6,6 +6,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.net.HttpURLConnection
+import java.util.concurrent.ConcurrentHashMap
 
 data class SubscriptionImportProgress(
     val message: String,
@@ -32,6 +34,9 @@ class SubscriptionImporter(
     private val runningTasks =
         mutableListOf<Future<*>>()
 
+    private val runningConnections =
+        ConcurrentHashMap.newKeySet<HttpURLConnection>()
+
     fun cancel() {
         cancelled.set(true)
 
@@ -39,6 +44,10 @@ class SubscriptionImporter(
             runningTasks.forEach {
                 it.cancel(true)
             }
+        }
+
+        runningConnections.forEach {
+            runCatching { it.disconnect() }
         }
     }
 
@@ -60,8 +69,10 @@ class SubscriptionImporter(
             val registry =
                 SubscriptionRegistryClient.fetch(
                     registryUrl = registryUrl,
-                    maxSourceCount =
-                        maxSourceCount
+                maxSourceCount =
+                        maxSourceCount,
+                onConnectionOpened = runningConnections::add,
+                onConnectionClosed = runningConnections::remove
                 )
 
             checkNotCancelled()
@@ -117,7 +128,9 @@ class SubscriptionImporter(
                                                 userAgent =
                                                     HttpTextClient
                                                         .SUBSCRIPTION_USER_AGENT,
-                                                noCache = true
+                                                noCache = true,
+                                                onConnectionOpened = runningConnections::add,
+                                                onConnectionClosed = runningConnections::remove
                                             )
 
                                         SubscriptionContentParser
@@ -140,6 +153,8 @@ class SubscriptionImporter(
                                     }.getOrDefault(
                                         emptyList()
                                     )
+
+                                checkNotCancelled()
 
                                 if (links.isNotEmpty()) {
                                     successful

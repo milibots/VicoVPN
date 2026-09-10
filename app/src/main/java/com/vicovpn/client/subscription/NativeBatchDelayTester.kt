@@ -20,7 +20,8 @@ data class NativeBatchTestProgress(
     val tested: Int,
     val total: Int,
     val working: Int,
-    val batchIndex: Int
+    val batchIndex: Int,
+    val bestLatencyMs: Long?
 )
 
 class NativeBatchDelayTester(
@@ -184,7 +185,13 @@ class NativeBatchDelayTester(
                                         working =
                                             available,
                                         batchIndex =
-                                            batchIndex
+                                            batchIndex,
+                                        bestLatencyMs =
+                                            synchronized(working) {
+                                                working.minOfOrNull {
+                                                    it.latencyMs
+                                                }
+                                            }
                                     )
                                 )
 
@@ -211,8 +218,10 @@ class NativeBatchDelayTester(
 
                     val completedInTime =
                         executor.awaitTermination(
-                            10,
-                            TimeUnit.SECONDS
+                            if (
+                                stopAfterCurrentBatch.get()
+                            ) 750 else 10_000,
+                            TimeUnit.MILLISECONDS
                         )
 
                     if (!completedInTime) {
